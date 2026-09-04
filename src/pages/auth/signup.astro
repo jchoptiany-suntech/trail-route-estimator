@@ -1,8 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SignUpForm from "@/components/auth/SignUpForm";
+import { getAuthErrorMessageFromParams } from "@/lib/auth/error-mapping";
 
-const error = Astro.url.searchParams.get("error");
+const error = getAuthErrorMessageFromParams(Astro.url.searchParams);
 ---
 
 <Layout title="Sign up">
