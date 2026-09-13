@@ -295,29 +295,29 @@ This change is additive: existing latest tables remain intact. Rollback path rem
 
 #### Automated
 
-- [x] 1.1 New history migrations compile cleanly and follow owner-only RLS policy conventions in `supabase/migrations`.
-- [x] 1.2 Astro type generation remains valid after type extensions: `npx astro sync`.
-- [x] 1.3 Lint passes after contract updates: `npm run lint`.
+- [x] 1.1 New history migrations compile cleanly and follow owner-only RLS policy conventions in `supabase/migrations`. — 0558bc6
+- [x] 1.2 Astro type generation remains valid after type extensions: `npx astro sync`. — 0558bc6
+- [x] 1.3 Lint passes after contract updates: `npm run lint`. — 0558bc6
 
 #### Manual
 
-- [x] 1.4 Schema design clearly supports history listing with deterministic order.
-- [x] 1.5 Dedupe keys unambiguously represent “same route + same profile input”.
-- [x] 1.6 Route history shape remains lightweight and aligned to S-04 scope.
+- [x] 1.4 Schema design clearly supports history listing with deterministic order. — 0558bc6
+- [x] 1.5 Dedupe keys unambiguously represent “same route + same profile input”. — 0558bc6
+- [x] 1.6 Route history shape remains lightweight and aligned to S-04 scope. — 0558bc6
 
 ### Phase 2: Implement history services and dedupe-aware write behavior
 
 #### Automated
 
-- [ ] 2.1 Service-level unit tests validate dedupe behavior and stable ordering contracts: `node --test`.
-- [ ] 2.2 Lint and type checks pass for service/orchestration changes: `npm run lint`.
-- [ ] 2.3 Build remains green with updated service contracts: `npm run build`.
+- [x] 2.1 Service-level unit tests validate dedupe behavior and stable ordering contracts: `node --test`.
+- [x] 2.2 Lint and type checks pass for service/orchestration changes: `npm run lint`.
+- [x] 2.3 Build remains green with updated service contracts: `npm run build`.
 
 #### Manual
 
-- [ ] 2.4 Recompute with same route hash + same profile signature does not create duplicate history entries.
-- [ ] 2.5 Recompute with changed profile signature for same route creates/updates history according to chosen dedupe contract.
-- [ ] 2.6 Returned service data contains fields required by dashboard history rendering.
+- [x] 2.4 Recompute with same route hash + same profile signature does not create duplicate history entries.
+- [x] 2.5 Recompute with changed profile signature for same route creates/updates history according to chosen dedupe contract.
+- [x] 2.6 Returned service data contains fields required by dashboard history rendering.
 
 ### Phase 3: Integrate API flows with explicit partial-failure warnings
 

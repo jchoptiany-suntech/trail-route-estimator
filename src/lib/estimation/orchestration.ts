@@ -1,8 +1,10 @@
 import { computeRouteEstimation } from "@/lib/estimation/engine";
+import { buildRouteEstimationDeduplicationKey } from "@/lib/estimation/history-signature";
 import { mapRouteEstimationError, type RouteEstimationError } from "@/lib/estimation/error-mapping";
-import { upsertRouteEstimationForUser } from "@/lib/estimation/service";
+import { upsertRouteEstimationForUser, upsertRouteEstimationHistoryEntryForUser } from "@/lib/estimation/service";
 import type { RouteEstimationSnapshot } from "@/lib/estimation/types";
 import { isProfileComplete, type SportProfile } from "@/lib/profile/service";
+import { upsertSavedRouteHistoryForUser } from "@/lib/route/service";
 import type { RouteSnapshot } from "@/lib/route/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -27,10 +29,19 @@ export interface RecomputeSkipped {
 export interface RecomputeFailure {
   ok: false;
   skipped?: false;
+  partial?: false;
   error: RouteEstimationError;
 }
 
-export type RecomputeResult = RecomputeSuccess | RecomputeSkipped | RecomputeFailure;
+export interface RecomputePartialFailure {
+  ok: false;
+  skipped?: false;
+  partial: true;
+  stage: "estimation_history" | "saved_route_history";
+  error: RouteEstimationError;
+}
+
+export type RecomputeResult = RecomputeSuccess | RecomputeSkipped | RecomputeFailure | RecomputePartialFailure;
 
 export async function recomputeLatestEstimation(input: RecomputeInput): Promise<RecomputeResult> {
   if (!input.snapshot) {
@@ -71,6 +82,56 @@ export async function recomputeLatestEstimation(input: RecomputeInput): Promise<
         error: {
           code: "storage_failure",
           message: "Unable to save estimation right now. Please try again.",
+        },
+      };
+    }
+
+    const deduplicationKey = await buildRouteEstimationDeduplicationKey(input.snapshot, {
+      experienceLevel: input.profile.experienceLevel,
+      weightKg: input.profile.weightKg,
+      weeklyDistanceKm: input.profile.weeklyDistanceKm,
+      updatedAt: input.profile.updatedAt,
+    });
+
+    const historyEntry = await upsertRouteEstimationHistoryEntryForUser(
+      input.supabase,
+      input.userId,
+      deduplicationKey,
+      computed,
+      {
+        sourceUploadedAt: input.snapshot.uploadedAt,
+        profileUpdatedAt: input.profile.updatedAt,
+      },
+    );
+
+    if (historyEntry.error || !historyEntry.data) {
+      return {
+        ok: false,
+        partial: true,
+        stage: "estimation_history",
+        error: {
+          code: "history_storage_failure",
+          message: "Latest estimation was updated, but history could not be saved right now.",
+        },
+      };
+    }
+
+    const savedRouteHistory = await upsertSavedRouteHistoryForUser(
+      input.supabase,
+      input.userId,
+      deduplicationKey.routeHash,
+      input.snapshot,
+      computed.computedAt,
+    );
+
+    if (savedRouteHistory.error || !savedRouteHistory.data) {
+      return {
+        ok: false,
+        partial: true,
+        stage: "saved_route_history",
+        error: {
+          code: "history_storage_failure",
+          message: "Latest estimation was updated, but history could not be saved right now.",
         },
       };
     }
