@@ -335,11 +335,11 @@ Route snapshot schema is additive and independent from existing profile schema. 
 
 #### Automated
 
-- [x] 4.1 Repository lint remains green after final S-02 integration: `npm run lint`.
-- [x] 4.2 Production build remains green after final S-02 integration: `npm run build`.
+- [x] 4.1 Repository lint remains green after final S-02 integration: `npm run lint`. — d97cac6
+- [x] 4.2 Production build remains green after final S-02 integration: `npm run build`. — d97cac6
 
 #### Manual
 
-- [x] 4.3 End-to-end flow passes: sign in -> dashboard upload -> preview map -> re-upload replacement.
-- [x] 4.4 Error UX is deterministic for invalid type, oversize, malformed GPX, and unauthorized upload.
-- [x] 4.5 Existing auth/profile flows show no regressions after S-02 integration.
+- [x] 4.3 End-to-end flow passes: sign in -> dashboard upload -> preview map -> re-upload replacement. — d97cac6
+- [x] 4.4 Error UX is deterministic for invalid type, oversize, malformed GPX, and unauthorized upload. — d97cac6
+- [x] 4.5 Existing auth/profile flows show no regressions after S-02 integration. — d97cac6
