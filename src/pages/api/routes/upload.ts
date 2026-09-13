@@ -25,9 +25,10 @@ export const POST: APIRoute = async (context) => {
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (authError || !user) {
     return context.redirect("/auth/signin");
   }
 
