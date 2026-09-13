@@ -372,11 +372,11 @@ Profile schema rollout is additive and should not alter existing auth session be
 
 #### Automated
 
-- [x] 4.1 Lint remains green after docs-adjacent code changes: `npm run lint`
-- [x] 4.2 Build remains green after full S-01 integration: `npm run build`
+- [x] 4.1 Lint remains green after docs-adjacent code changes: `npm run lint` — c2f6276
+- [x] 4.2 Build remains green after full S-01 integration: `npm run build` — c2f6276
 
 #### Manual
 
-- [x] 4.3 End-to-end matrix passes for register/login/profile draft/profile complete/gate redirect scenarios
-- [x] 4.4 Mapped errors are consistent across signin/signup/profile flows and avoid raw provider leakage
-- [x] 4.5 No regressions observed in topbar auth state transitions and sign-out flow
+- [x] 4.3 End-to-end matrix passes for register/login/profile draft/profile complete/gate redirect scenarios — c2f6276
+- [x] 4.4 Mapped errors are consistent across signin/signup/profile flows and avoid raw provider leakage — c2f6276
+- [x] 4.5 No regressions observed in topbar auth state transitions and sign-out flow — c2f6276
