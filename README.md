@@ -111,7 +111,14 @@ npx supabase stop
 
 The local Studio UI is available at `http://localhost:54323`.
 
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
+This app now includes a profile data contract in `supabase/migrations/`.
+After cloning or pulling new changes, run:
+
+```bash
+npx supabase db reset
+```
+
+to apply migrations locally (including the `profiles` table and RLS policies).
 
 ### Using a cloud Supabase project instead
 
@@ -144,9 +151,16 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 | `/auth/signin`        | Email/password sign-in form                                             |
 | `/auth/signup`        | Email/password sign-up form                                             |
 | `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+| `/profile`            | Authenticated sport profile form (draft + complete states)              |
+| `/dashboard`          | Protected page unlocked after profile is marked complete                 |
 
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+Route protection is handled in `src/middleware.ts`. `/profile` is auth-protected, and `/dashboard` additionally requires a completed profile.
+
+### Profile model notes
+
+- Profile rows are one-to-one with authenticated users (`public.profiles.user_id -> auth.users.id`).
+- Incomplete entries are stored as `draft`; only `complete` profiles unlock `/dashboard`.
+- RLS policies allow users to read and modify only their own profile row.
 
 ## Deployment
 

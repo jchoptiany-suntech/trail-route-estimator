@@ -358,25 +358,25 @@ Profile schema rollout is additive and should not alter existing auth session be
 
 #### Automated
 
-- [x] 3.1 Astro sync succeeds with new route + middleware type usage: `npx astro sync`
-- [x] 3.2 Lint passes for profile UI and middleware updates: `npm run lint`
-- [x] 3.3 Production build succeeds with gating and new page integration: `npm run build`
+- [x] 3.1 Astro sync succeeds with new route + middleware type usage: `npx astro sync` — 229c037
+- [x] 3.2 Lint passes for profile UI and middleware updates: `npm run lint` — 229c037
+- [x] 3.3 Production build succeeds with gating and new page integration: `npm run build` — 229c037
 
 #### Manual
 
-- [x] 3.4 Authenticated user with incomplete profile is redirected to `/profile`
-- [x] 3.5 Completing required profile fields unlocks access to `/dashboard`
-- [x] 3.6 Gate policy does not break sign-out, sign-in, or public-page navigation
+- [x] 3.4 Authenticated user with incomplete profile is redirected to `/profile` — 229c037
+- [x] 3.5 Completing required profile fields unlocks access to `/dashboard` — 229c037
+- [x] 3.6 Gate policy does not break sign-out, sign-in, or public-page navigation — 229c037
 
 ### Phase 4: Verification matrix and documentation handoff
 
 #### Automated
 
-- [ ] 4.1 Lint remains green after docs-adjacent code changes: `npm run lint`
-- [ ] 4.2 Build remains green after full S-01 integration: `npm run build`
+- [x] 4.1 Lint remains green after docs-adjacent code changes: `npm run lint`
+- [x] 4.2 Build remains green after full S-01 integration: `npm run build`
 
 #### Manual
 
-- [ ] 4.3 End-to-end matrix passes for register/login/profile draft/profile complete/gate redirect scenarios
-- [ ] 4.4 Mapped errors are consistent across signin/signup/profile flows and avoid raw provider leakage
-- [ ] 4.5 No regressions observed in topbar auth state transitions and sign-out flow
+- [x] 4.3 End-to-end matrix passes for register/login/profile draft/profile complete/gate redirect scenarios
+- [x] 4.4 Mapped errors are consistent across signin/signup/profile flows and avoid raw provider leakage
+- [x] 4.5 No regressions observed in topbar auth state transitions and sign-out flow
