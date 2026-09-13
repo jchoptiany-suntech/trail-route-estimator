@@ -293,42 +293,42 @@ Estimation remains synchronous in current SSR/API flow with existing GPX size co
 
 #### Automated
 
-- [x] 1.1 Migration file exists in `supabase/migrations` with owner-only RLS policies.
-- [x] 1.2 Astro sync passes with new estimation types: `npx astro sync`.
-- [x] 1.3 Lint passes after adding domain contracts: `npm run lint`.
+- [x] 1.1 Migration file exists in `supabase/migrations` with owner-only RLS policies. — 1011a64
+- [x] 1.2 Astro sync passes with new estimation types: `npx astro sync`. — 1011a64
+- [x] 1.3 Lint passes after adding domain contracts: `npm run lint`. — 1011a64
 
 #### Manual
 
-- [ ] 1.4 Migration semantics enforce latest-per-user estimation ownership.
-- [ ] 1.5 Estimation type contract supports API/service and dashboard rendering.
+- [x] 1.4 Migration semantics enforce latest-per-user estimation ownership.
+- [x] 1.5 Estimation type contract supports API/service and dashboard rendering.
 
 ### Phase 2: Build deterministic analysis and estimation engine
 
 #### Automated
 
-- [ ] 2.1 Estimation engine deterministic checks pass (fixtures/edge cases): `node --test`.
-- [ ] 2.2 Astro sync passes with estimation modules: `npx astro sync`.
-- [ ] 2.3 Lint passes for estimation domain code: `npm run lint`.
+- [x] 2.1 Estimation engine deterministic checks pass (fixtures/edge cases): `node --test`.
+- [x] 2.2 Astro sync passes with estimation modules: `npx astro sync`.
+- [x] 2.3 Lint passes for estimation domain code: `npm run lint`.
 
 #### Manual
 
-- [ ] 2.4 Same route/profile input always yields identical estimation output.
-- [ ] 2.5 Difficulty classification is stable on threshold boundaries.
-- [ ] 2.6 Missing elevation-derived edge cases fail gracefully with explicit error category.
+- [x] 2.4 Same route/profile input always yields identical estimation output.
+- [x] 2.5 Difficulty classification is stable on threshold boundaries.
+- [x] 2.6 Missing elevation-derived edge cases fail gracefully with explicit error category.
 
 ### Phase 3: Integrate hybrid recomputation into API flows
 
 #### Automated
 
-- [ ] 3.1 API routes pass lint/type checks after recompute integration: `npm run lint`.
-- [ ] 3.2 Production build passes with integrated estimation flow: `npm run build`.
-- [ ] 3.3 Route/profile recompute integration checks pass: `node --test`.
+- [x] 3.1 API routes pass lint/type checks after recompute integration: `npm run lint`.
+- [x] 3.2 Production build passes with integrated estimation flow: `npm run build`.
+- [x] 3.3 Route/profile recompute integration checks pass: `node --test`.
 
 #### Manual
 
-- [ ] 3.4 Uploading valid GPX recomputes and stores latest estimation.
-- [ ] 3.5 Completing/updating profile recomputes latest estimation when route snapshot exists.
-- [ ] 3.6 Estimation failure does not break upload/profile success path and is communicated.
+- [x] 3.4 Uploading valid GPX recomputes and stores latest estimation.
+- [x] 3.5 Completing/updating profile recomputes latest estimation when route snapshot exists.
+- [x] 3.6 Estimation failure does not break upload/profile success path and is communicated.
 
 ### Phase 4: Render dashboard estimation context and finalize verification
 

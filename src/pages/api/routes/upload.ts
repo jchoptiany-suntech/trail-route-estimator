@@ -1,4 +1,6 @@
 import type { APIRoute } from "astro";
+import { recomputeLatestEstimation } from "@/lib/estimation/orchestration";
+import { getProfileForUser } from "@/lib/profile/service";
 import { createRouteUploadError, mapRouteUploadError } from "@/lib/route/error-mapping";
 import { parseGpxSnapshotFromText, validateGpxFileMetadata } from "@/lib/route/gpx";
 import { upsertRouteSnapshotForUser } from "@/lib/route/service";
@@ -13,6 +15,13 @@ function dashboardErrorRedirect(message: string): string {
 function dashboardSuccessRedirect(message: string): string {
   const params = new URLSearchParams();
   params.set("success", message);
+  return `/dashboard?${params.toString()}`;
+}
+
+function dashboardSuccessWarningRedirect(success: string, warning: string): string {
+  const params = new URLSearchParams();
+  params.set("success", success);
+  params.set("warning", warning);
   return `/dashboard?${params.toString()}`;
 }
 
@@ -44,11 +53,29 @@ export const POST: APIRoute = async (context) => {
     validateGpxFileMetadata(maybeFile.name, maybeFile.type, maybeFile.size);
     const fileText = await maybeFile.text();
     const parsed = parseGpxSnapshotFromText(maybeFile.name, maybeFile.size, fileText);
-    const { error } = await upsertRouteSnapshotForUser(supabase, user.id, parsed.snapshot);
+    const { data: snapshot, error } = await upsertRouteSnapshotForUser(supabase, user.id, parsed.snapshot);
 
     if (error) {
       const mapped = createRouteUploadError("storage_failure");
       return context.redirect(dashboardErrorRedirect(mapped.message));
+    }
+
+    const profileResult = await getProfileForUser(supabase, user.id);
+    if (profileResult.error) {
+      return context.redirect(
+        dashboardSuccessWarningRedirect("GPX uploaded successfully.", "Estimation was not refreshed."),
+      );
+    }
+
+    const recompute = await recomputeLatestEstimation({
+      supabase,
+      userId: user.id,
+      snapshot,
+      profile: profileResult.data,
+    });
+
+    if (!recompute.ok && !recompute.skipped) {
+      return context.redirect(dashboardSuccessWarningRedirect("GPX uploaded successfully.", recompute.error.message));
     }
   } catch (error) {
     const mapped = mapRouteUploadError(error);

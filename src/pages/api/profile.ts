@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { buildAuthErrorRedirect, createAuthFormError } from "@/lib/auth/error-mapping";
+import { recomputeLatestEstimation } from "@/lib/estimation/orchestration";
 import {
   getProfileForUser,
   isProfileComplete,
@@ -7,6 +8,7 @@ import {
   type ProfileDraftInput,
   type ProfileStatus,
 } from "@/lib/profile/service";
+import { getRouteSnapshotForUser } from "@/lib/route/service";
 import { createClient } from "@/lib/supabase";
 
 type ProfileAction = "saveDraft" | "saveComplete";
@@ -48,6 +50,12 @@ function profileSuccessRedirect(message: string): string {
   return `/profile?${params.toString()}`;
 }
 
+function dashboardWarningRedirect(message: string): string {
+  const params = new URLSearchParams();
+  params.set("warning", message);
+  return `/dashboard?${params.toString()}`;
+}
+
 export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
@@ -87,6 +95,22 @@ export const POST: APIRoute = async (context) => {
   }
 
   if (data.status === "complete") {
+    const snapshotResult = await getRouteSnapshotForUser(supabase, user.id);
+    if (snapshotResult.error) {
+      return context.redirect(dashboardWarningRedirect("Profile saved, but estimation was not refreshed."));
+    }
+
+    const recompute = await recomputeLatestEstimation({
+      supabase,
+      userId: user.id,
+      snapshot: snapshotResult.data,
+      profile: data,
+    });
+
+    if (!recompute.ok && !recompute.skipped) {
+      return context.redirect(dashboardWarningRedirect(`Profile saved, but ${recompute.error.message.toLowerCase()}`));
+    }
+
     return context.redirect("/dashboard");
   }
 
