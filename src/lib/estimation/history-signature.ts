@@ -6,29 +6,23 @@ function normalizeNumber(value: number | null): string {
 }
 
 function toRouteCanonicalSnapshot(snapshot: RouteSnapshot): string {
-  const geometry = snapshot.geometry.map((point) => ({
-    lat: normalizeNumber(point.lat),
-    lng: normalizeNumber(point.lng),
-    eleM: point.eleM === null ? "null" : normalizeNumber(point.eleM),
-  }));
-
-  return JSON.stringify({
-    sourceFileName: snapshot.sourceFileName.trim().toLowerCase(),
-    sourceFileSizeBytes: snapshot.sourceFileSizeBytes,
-    pointCount: snapshot.pointCount,
-    totalDistanceM: normalizeNumber(snapshot.totalDistanceM),
-    elevationGainM: normalizeNumber(snapshot.elevationGainM),
-    elevationLossM: normalizeNumber(snapshot.elevationLossM),
-    minElevationM: normalizeNumber(snapshot.minElevationM),
-    maxElevationM: normalizeNumber(snapshot.maxElevationM),
-    bounds: {
-      minLat: normalizeNumber(snapshot.bounds.minLat),
-      minLng: normalizeNumber(snapshot.bounds.minLng),
-      maxLat: normalizeNumber(snapshot.bounds.maxLat),
-      maxLng: normalizeNumber(snapshot.bounds.maxLng),
-    },
-    geometry,
-  });
+  return [
+    "route-shape-v2",
+    `pointCount=${snapshot.pointCount}`,
+    `totalDistanceM=${normalizeNumber(snapshot.totalDistanceM)}`,
+    `elevationGainM=${normalizeNumber(snapshot.elevationGainM)}`,
+    `elevationLossM=${normalizeNumber(snapshot.elevationLossM)}`,
+    `minElevationM=${normalizeNumber(snapshot.minElevationM)}`,
+    `maxElevationM=${normalizeNumber(snapshot.maxElevationM)}`,
+    `startLat=${normalizeNumber(snapshot.startLat)}`,
+    `startLng=${normalizeNumber(snapshot.startLng)}`,
+    `endLat=${normalizeNumber(snapshot.endLat)}`,
+    `endLng=${normalizeNumber(snapshot.endLng)}`,
+    `bounds.minLat=${normalizeNumber(snapshot.bounds.minLat)}`,
+    `bounds.minLng=${normalizeNumber(snapshot.bounds.minLng)}`,
+    `bounds.maxLat=${normalizeNumber(snapshot.bounds.maxLat)}`,
+    `bounds.maxLng=${normalizeNumber(snapshot.bounds.maxLng)}`,
+  ].join("|");
 }
 
 function toProfileCanonicalSignature(profile: EstimationProfileInput): string {

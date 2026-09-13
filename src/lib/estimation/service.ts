@@ -8,6 +8,7 @@ import type {
   RouteEstimationRow,
   RouteEstimationSnapshot,
 } from "@/lib/estimation/types";
+import type { RouteSnapshot } from "@/lib/route/types";
 
 const ROUTE_ESTIMATION_SELECT =
   "user_id, estimated_time_minutes, difficulty, average_slope_percent, effort_score, derived_metrics, source_uploaded_at, profile_updated_at, computed_at, created_at, updated_at";
@@ -155,4 +156,42 @@ export async function upsertRouteEstimationHistoryEntryForUser(
   }
 
   return { data: mapRowToRouteEstimationHistory(data), error: null };
+}
+
+export async function persistRouteEstimationBundle(
+  supabase: SupabaseClient,
+  userId: string,
+  deduplicationKey: RouteEstimationDeduplicationKey,
+  result: RouteEstimationComputation,
+  inputSnapshot: RouteEstimationInputSnapshot,
+  routeSnapshot: RouteSnapshot,
+): Promise<{ error: Error | null }> {
+  const { error } = await supabase.rpc("persist_route_estimation_bundle", {
+    p_user_id: userId,
+    p_route_hash: deduplicationKey.routeHash,
+    p_profile_signature: deduplicationKey.profileSignature,
+    p_estimated_time_minutes: result.estimatedTimeMinutes,
+    p_difficulty: result.difficulty,
+    p_average_slope_percent: result.derivedMetrics.averageSlopePercent,
+    p_effort_score: result.derivedMetrics.effortScore,
+    p_derived_metrics: result.derivedMetrics,
+    p_source_uploaded_at: inputSnapshot.sourceUploadedAt,
+    p_profile_updated_at: inputSnapshot.profileUpdatedAt,
+    p_computed_at: result.computedAt,
+    p_source_file_name: routeSnapshot.sourceFileName,
+    p_source_file_size_bytes: routeSnapshot.sourceFileSizeBytes,
+    p_point_count: routeSnapshot.pointCount,
+    p_total_distance_m: routeSnapshot.totalDistanceM,
+    p_elevation_gain_m: routeSnapshot.elevationGainM,
+    p_elevation_loss_m: routeSnapshot.elevationLossM,
+    p_min_elevation_m: routeSnapshot.minElevationM,
+    p_max_elevation_m: routeSnapshot.maxElevationM,
+    p_start_lat: routeSnapshot.startLat,
+    p_start_lng: routeSnapshot.startLng,
+    p_end_lat: routeSnapshot.endLat,
+    p_end_lng: routeSnapshot.endLng,
+    p_bounds: routeSnapshot.bounds,
+  });
+
+  return { error };
 }

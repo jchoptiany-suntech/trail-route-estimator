@@ -11,6 +11,7 @@ function runHistoryContractsProbe() {
 import { buildRouteEstimationDeduplicationKey } from "./src/lib/estimation/history-signature.ts";
 import {
   listRouteEstimationHistoryForUser,
+  persistRouteEstimationBundle,
   upsertRouteEstimationHistoryEntryForUser,
 } from "./src/lib/estimation/service.ts";
 import { listSavedRouteHistoryForUser, upsertSavedRouteHistoryForUser } from "./src/lib/route/service.ts";
@@ -51,11 +52,20 @@ const profileB = { ...profileA, weeklyDistanceKm: 42 };
 const keyA1 = await buildRouteEstimationDeduplicationKey(snapshot, profileA);
 const keyA2 = await buildRouteEstimationDeduplicationKey(snapshot, profileA);
 const keyB = await buildRouteEstimationDeduplicationKey(snapshot, profileB);
+const keyRenamed = await buildRouteEstimationDeduplicationKey(
+  {
+    ...snapshot,
+    sourceFileName: "same-track-renamed.gpx",
+    sourceFileSizeBytes: 9999,
+  },
+  profileA,
+);
 
 const listOrder = [];
 const routeListOrder = [];
 let estimationConflict = "";
 let routeConflict = "";
+let rpcName = "";
 
 const listSupabase = {
   from() {
@@ -186,6 +196,13 @@ const routeUpsertSupabase = {
   },
 };
 
+const rpcSupabase = {
+  rpc(name) {
+    rpcName = name;
+    return Promise.resolve({ error: null });
+  },
+};
+
 await listRouteEstimationHistoryForUser(listSupabase as any, "user-1", 20);
 await listSavedRouteHistoryForUser(routeListSupabase as any, "user-1", 20);
 await upsertRouteEstimationHistoryEntryForUser(
@@ -215,13 +232,36 @@ await upsertSavedRouteHistoryForUser(
   snapshot,
   "2026-09-13T22:01:00.000Z",
 );
+await persistRouteEstimationBundle(
+  rpcSupabase as any,
+  "user-1",
+  keyA1,
+  {
+    estimatedTimeMinutes: 100,
+    difficulty: "medium",
+    derivedMetrics: {
+      averageSlopePercent: 7.2,
+      elevationPerKmM: 120,
+      profileAdjustmentFactor: 1.1,
+      effortScore: 4.8,
+    },
+    computedAt: "2026-09-13T22:01:00.000Z",
+  },
+  {
+    sourceUploadedAt: "2026-09-13T22:00:00.000Z",
+    profileUpdatedAt: "2026-09-13T22:00:00.000Z",
+  },
+  snapshot,
+);
 
 console.log(\`sameInputSameKey=\${keyA1.routeHash === keyA2.routeHash && keyA1.profileSignature === keyA2.profileSignature}\`);
 console.log(\`differentProfileDifferentSignature=\${keyA1.profileSignature !== keyB.profileSignature}\`);
+console.log(\`differentFileMetadataSameRouteHash=\${keyA1.routeHash === keyRenamed.routeHash}\`);
 console.log(\`estimationListOrder=\${listOrder.join(",")}\`);
 console.log(\`savedRouteListOrder=\${routeListOrder.join(",")}\`);
 console.log(\`estimationUpsertConflict=\${estimationConflict}\`);
 console.log(\`savedRouteUpsertConflict=\${routeConflict}\`);
+console.log(\`bundleRpcName=\${rpcName}\`);
 `;
 
   writeFileSync(scriptPath, script, "utf8");
@@ -244,6 +284,11 @@ void test("profile signature changes when profile input changes", () => {
   assert.match(output, /differentProfileDifferentSignature=true/);
 });
 
+void test("route hash ignores filename and file size metadata", () => {
+  const output = runHistoryContractsProbe();
+  assert.match(output, /differentFileMetadataSameRouteHash=true/);
+});
+
 void test("history list ordering contracts are stable", () => {
   const output = runHistoryContractsProbe();
   assert.match(output, /estimationListOrder=computed_at:desc,id:desc/);
@@ -254,4 +299,9 @@ void test("history upserts keep explicit dedupe conflict keys", () => {
   const output = runHistoryContractsProbe();
   assert.match(output, /estimationUpsertConflict=user_id,route_hash,profile_signature/);
   assert.match(output, /savedRouteUpsertConflict=user_id,route_hash/);
+});
+
+void test("bundle persistence uses transactional rpc contract", () => {
+  const output = runHistoryContractsProbe();
+  assert.match(output, /bundleRpcName=persist_route_estimation_bundle/);
 });
