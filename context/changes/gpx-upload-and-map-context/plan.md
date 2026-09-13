@@ -320,26 +320,26 @@ Route snapshot schema is additive and independent from existing profile schema. 
 
 #### Automated
 
-- [x] 3.1 Astro sync succeeds with new route API and dashboard component wiring: `npx astro sync`.
-- [x] 3.2 Lint passes for dashboard and new route components: `npm run lint`.
-- [x] 3.3 Production build succeeds with upload and mini-map integration: `npm run build`.
+- [x] 3.1 Astro sync succeeds with new route API and dashboard component wiring: `npx astro sync`. — ecbd901
+- [x] 3.2 Lint passes for dashboard and new route components: `npm run lint`. — ecbd901
+- [x] 3.3 Production build succeeds with upload and mini-map integration: `npm run build`. — ecbd901
 
 #### Manual
 
-- [x] 3.4 Completed-profile user can upload a valid GPX and see route preview on dashboard.
-- [x] 3.5 Re-upload replaces prior snapshot without duplicate visible state.
-- [x] 3.6 Invalid type/oversize/malformed GPX shows friendly errors and keeps last valid snapshot.
-- [x] 3.7 Unauthenticated upload attempts are denied or redirected consistently.
+- [x] 3.4 Completed-profile user can upload a valid GPX and see route preview on dashboard. — ecbd901
+- [x] 3.5 Re-upload replaces prior snapshot without duplicate visible state. — ecbd901
+- [x] 3.6 Invalid type/oversize/malformed GPX shows friendly errors and keeps last valid snapshot. — ecbd901
+- [x] 3.7 Unauthenticated upload attempts are denied or redirected consistently. — ecbd901
 
 ### Phase 4: Final verification matrix and documentation handoff
 
 #### Automated
 
-- [ ] 4.1 Repository lint remains green after final S-02 integration: `npm run lint`.
-- [ ] 4.2 Production build remains green after final S-02 integration: `npm run build`.
+- [x] 4.1 Repository lint remains green after final S-02 integration: `npm run lint`.
+- [x] 4.2 Production build remains green after final S-02 integration: `npm run build`.
 
 #### Manual
 
-- [ ] 4.3 End-to-end flow passes: sign in -> dashboard upload -> preview map -> re-upload replacement.
-- [ ] 4.4 Error UX is deterministic for invalid type, oversize, malformed GPX, and unauthorized upload.
-- [ ] 4.5 Existing auth/profile flows show no regressions after S-02 integration.
+- [x] 4.3 End-to-end flow passes: sign in -> dashboard upload -> preview map -> re-upload replacement.
+- [x] 4.4 Error UX is deterministic for invalid type, oversize, malformed GPX, and unauthorized upload.
+- [x] 4.5 Existing auth/profile flows show no regressions after S-02 integration.

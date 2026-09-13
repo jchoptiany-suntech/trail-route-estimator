@@ -111,14 +111,14 @@ npx supabase stop
 
 The local Studio UI is available at `http://localhost:54323`.
 
-This app now includes a profile data contract in `supabase/migrations/`.
+This app now includes data contracts in `supabase/migrations/` for profiles and route snapshots.
 After cloning or pulling new changes, run:
 
 ```bash
 npx supabase db reset
 ```
 
-to apply migrations locally (including the `profiles` table and RLS policies).
+to apply migrations locally (including `profiles`, `route_snapshots`, and RLS policies).
 
 ### Using a cloud Supabase project instead
 
@@ -152,7 +152,7 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 | `/auth/signup`        | Email/password sign-up form                                             |
 | `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
 | `/profile`            | Authenticated sport profile form (draft + complete states)              |
-| `/dashboard`          | Protected page unlocked after profile is marked complete                 |
+| `/dashboard`          | Protected route dashboard with GPX upload and latest route mini-map      |
 
 Route protection is handled in `src/middleware.ts`. `/profile` is auth-protected, and `/dashboard` additionally requires a completed profile.
 
@@ -161,6 +161,14 @@ Route protection is handled in `src/middleware.ts`. `/profile` is auth-protected
 - Profile rows are one-to-one with authenticated users (`public.profiles.user_id -> auth.users.id`).
 - Incomplete entries are stored as `draft`; only `complete` profiles unlock `/dashboard`.
 - RLS policies allow users to read and modify only their own profile row.
+
+### Route upload and snapshot notes
+
+- Upload route from `/dashboard` using a `.gpx` file (max 5 MB).
+- Accepted upload MIME families include GPX/XML and common generic browser MIME values.
+- Upload is persisted as a **latest snapshot per user** (`public.route_snapshots`), so a new upload replaces the previous route context.
+- Dashboard renders a static mini-map preview and basic route metrics from the persisted snapshot.
+- If parsing/saving fails, the previous valid snapshot remains unchanged.
 
 ## Deployment
 
