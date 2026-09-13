@@ -20,6 +20,18 @@ create table if not exists public.profiles (
   )
 );
 
+create or replace function public.prevent_profile_status_downgrade()
+returns trigger
+language plpgsql
+as $$
+begin
+  if old.status = 'complete' and new.status = 'draft' then
+    raise exception 'Completed profile cannot be reverted to draft';
+  end if;
+  return new;
+end;
+$$;
+
 create or replace function public.set_profiles_updated_at()
 returns trigger
 language plpgsql
@@ -35,6 +47,12 @@ create trigger profiles_set_updated_at
 before update on public.profiles
 for each row
 execute function public.set_profiles_updated_at();
+
+drop trigger if exists profiles_prevent_status_downgrade on public.profiles;
+create trigger profiles_prevent_status_downgrade
+before update on public.profiles
+for each row
+execute function public.prevent_profile_status_downgrade();
 
 alter table public.profiles enable row level security;
 
