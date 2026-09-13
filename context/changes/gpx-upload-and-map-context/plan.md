@@ -306,30 +306,30 @@ Route snapshot schema is additive and independent from existing profile schema. 
 
 #### Automated
 
-- [x] 2.1 Astro sync succeeds with new route parser/service modules: `npx astro sync`.
-- [x] 2.2 Lint passes for parser and service layer code: `npm run lint`.
-- [x] 2.3 Production build succeeds after route service integration: `npm run build`.
+- [x] 2.1 Astro sync succeeds with new route parser/service modules: `npx astro sync`. — cfe0d5a
+- [x] 2.2 Lint passes for parser and service layer code: `npm run lint`. — cfe0d5a
+- [x] 2.3 Production build succeeds after route service integration: `npm run build`. — cfe0d5a
 
 #### Manual
 
-- [x] 2.4 Valid GPX input produces normalized points and metadata expected by snapshot service.
-- [x] 2.5 Malformed GPX and empty-track GPX are rejected with deterministic error categories.
-- [x] 2.6 Parser/service failure paths preserve the previously stored valid snapshot.
+- [x] 2.4 Valid GPX input produces normalized points and metadata expected by snapshot service. — cfe0d5a
+- [x] 2.5 Malformed GPX and empty-track GPX are rejected with deterministic error categories. — cfe0d5a
+- [x] 2.6 Parser/service failure paths preserve the previously stored valid snapshot. — cfe0d5a
 
 ### Phase 3: Deliver upload endpoint and dashboard mini-map flow
 
 #### Automated
 
-- [ ] 3.1 Astro sync succeeds with new route API and dashboard component wiring: `npx astro sync`.
-- [ ] 3.2 Lint passes for dashboard and new route components: `npm run lint`.
-- [ ] 3.3 Production build succeeds with upload and mini-map integration: `npm run build`.
+- [x] 3.1 Astro sync succeeds with new route API and dashboard component wiring: `npx astro sync`.
+- [x] 3.2 Lint passes for dashboard and new route components: `npm run lint`.
+- [x] 3.3 Production build succeeds with upload and mini-map integration: `npm run build`.
 
 #### Manual
 
-- [ ] 3.4 Completed-profile user can upload a valid GPX and see route preview on dashboard.
-- [ ] 3.5 Re-upload replaces prior snapshot without duplicate visible state.
-- [ ] 3.6 Invalid type/oversize/malformed GPX shows friendly errors and keeps last valid snapshot.
-- [ ] 3.7 Unauthenticated upload attempts are denied or redirected consistently.
+- [x] 3.4 Completed-profile user can upload a valid GPX and see route preview on dashboard.
+- [x] 3.5 Re-upload replaces prior snapshot without duplicate visible state.
+- [x] 3.6 Invalid type/oversize/malformed GPX shows friendly errors and keeps last valid snapshot.
+- [x] 3.7 Unauthenticated upload attempts are denied or redirected consistently.
 
 ### Phase 4: Final verification matrix and documentation handoff
 

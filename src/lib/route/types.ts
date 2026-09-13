@@ -1,6 +1,12 @@
 export const GPX_UPLOAD_MAX_BYTES = 5 * 1024 * 1024;
 
-export const GPX_UPLOAD_ALLOWED_MIME_TYPES = ["application/gpx+xml", "application/xml", "text/xml"] as const;
+export const GPX_UPLOAD_ALLOWED_MIME_TYPES = [
+  "application/gpx+xml",
+  "application/xml",
+  "text/xml",
+  "application/octet-stream",
+  "text/plain",
+] as const;
 
 export const GPX_UPLOAD_ALLOWED_EXTENSIONS = [".gpx"] as const;
 

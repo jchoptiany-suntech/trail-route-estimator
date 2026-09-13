@@ -33,7 +33,11 @@ function hasValidExtension(fileName: string): boolean {
 }
 
 function hasValidMimeType(mimeType: string): boolean {
-  return GPX_UPLOAD_ALLOWED_MIME_TYPES.includes(mimeType as (typeof GPX_UPLOAD_ALLOWED_MIME_TYPES)[number]);
+  const normalized = mimeType.split(";")[0]?.trim().toLowerCase();
+  if (!normalized) {
+    return false;
+  }
+  return GPX_UPLOAD_ALLOWED_MIME_TYPES.includes(normalized as (typeof GPX_UPLOAD_ALLOWED_MIME_TYPES)[number]);
 }
 
 function parseCoordinate(value: string, code: GpxParseErrorCode): number {
