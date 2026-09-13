@@ -337,12 +337,12 @@ This change is additive: existing latest tables remain intact. Rollback path rem
 
 #### Automated
 
-- [x] 4.1 SSR/dashboard integration tests validate history rendering scenarios: `node --test`.
-- [x] 4.2 Astro sync and lint pass with new dashboard/history components: `npx astro sync` and `npm run lint`.
-- [x] 4.3 Production build succeeds with S-04 history UI enabled: `npm run build`.
+- [x] 4.1 SSR/dashboard integration tests validate history rendering scenarios: `node --test`. — d817589
+- [x] 4.2 Astro sync and lint pass with new dashboard/history components: `npx astro sync` and `npm run lint`. — d817589
+- [x] 4.3 Production build succeeds with S-04 history UI enabled: `npm run build`. — d817589
 
 #### Manual
 
-- [x] 4.4 User sees saved estimation history ordered by `computed_at DESC`, tie-break `id DESC`.
-- [x] 4.5 History entries include lightweight route context and estimation summary.
-- [x] 4.6 Empty-history and warning states are clear and do not regress latest estimation card UX.
+- [x] 4.4 User sees saved estimation history ordered by `computed_at DESC`, tie-break `id DESC`. — d817589
+- [x] 4.5 History entries include lightweight route context and estimation summary. — d817589
+- [x] 4.6 Empty-history and warning states are clear and do not regress latest estimation card UX. — d817589
