@@ -1,10 +1,10 @@
 ---
 change_id: gpx-upload-and-map-context
 title: GPX upload and map context
-status: impl_reviewed
+status: archived
 created: 2026-09-13
 updated: 2026-09-13
-archived_at: null
+archived_at: 2026-09-13T19:04:00Z
 ---
 
 ## Notes
