@@ -170,6 +170,13 @@ Route protection is handled in `src/middleware.ts`. `/profile` is auth-protected
 - Dashboard renders a static mini-map preview and basic route metrics from the persisted snapshot.
 - If parsing/saving fails, the previous valid snapshot remains unchanged.
 
+### Personalized estimation notes
+
+- Personalized estimation is persisted as **latest result per user** in `public.route_estimations`.
+- Estimation recompute is triggered after successful route upload and after completed profile updates.
+- Dashboard shows estimated completion time, difficulty label (`easy`, `medium`, `hard`), and key derived metrics.
+- If estimation recompute fails, route context remains available and the UI surfaces a warning message.
+
 ## Deployment
 
 This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).

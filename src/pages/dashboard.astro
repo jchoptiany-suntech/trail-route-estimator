@@ -1,17 +1,22 @@
 ---
+import RouteEstimationCard from "@/components/routes/RouteEstimationCard";
 import RouteMiniMap from "@/components/routes/RouteMiniMap";
 import RouteUploadForm from "@/components/routes/RouteUploadForm";
 import Layout from "@/layouts/Layout.astro";
+import { getRouteEstimationForUser } from "@/lib/estimation/service";
 import { getRouteSnapshotForUser } from "@/lib/route/service";
 import { createClient } from "@/lib/supabase";
 
 const { user } = Astro.locals;
 const error = Astro.url.searchParams.get("error");
 const success = Astro.url.searchParams.get("success");
+const warning = Astro.url.searchParams.get("warning");
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 const snapshotResult = user && supabase ? await getRouteSnapshotForUser(supabase, user.id) : { data: null };
+const estimationResult = user && supabase ? await getRouteEstimationForUser(supabase, user.id) : { data: null };
 const snapshot = snapshotResult.data;
+const estimation = estimationResult.data;
 ---
 
 <Layout title="Dashboard">
@@ -25,6 +30,13 @@ const snapshot = snapshotResult.data;
       <p class="mb-6 text-blue-100/80">
         Welcome, <span class="font-semibold text-white">{user?.email}</span>
       </p>
+      {
+        warning ? (
+          <p class="mb-4 rounded-lg border border-amber-500/30 bg-amber-900/30 px-3 py-2 text-sm text-amber-200">
+            {warning}
+          </p>
+        ) : null
+      }
 
       <div class="grid gap-6 md:grid-cols-2">
         <div class="space-y-4 rounded-xl border border-white/10 bg-white/5 p-4">
@@ -68,6 +80,19 @@ const snapshot = snapshotResult.data;
             )
           }
         </div>
+      </div>
+
+      <div class="mt-6">
+        {
+          estimation ? (
+            <RouteEstimationCard estimation={estimation} client:load />
+          ) : (
+            <p class="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-blue-100/70">
+              Personalized estimation is not available yet. Upload a route and keep your profile completed to generate
+              the latest result.
+            </p>
+          )
+        }
       </div>
     </div>
   </div>
