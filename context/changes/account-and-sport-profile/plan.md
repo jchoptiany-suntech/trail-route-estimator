@@ -329,30 +329,30 @@ Profile schema rollout is additive and should not alter existing auth session be
 
 #### Automated
 
-- [x] 1.1 Astro sync completes without schema/runtime errors: `npx astro sync`
-- [x] 1.2 Lint passes after auth-contract changes: `npm run lint`
-- [x] 1.3 Production build succeeds with auth changes: `npm run build`
+- [x] 1.1 Astro sync completes without schema/runtime errors: `npx astro sync` — 4cee4b3
+- [x] 1.2 Lint passes after auth-contract changes: `npm run lint` — 4cee4b3
+- [x] 1.3 Production build succeeds with auth changes: `npm run build` — 4cee4b3
 
 #### Manual
 
-- [x] 1.4 Invalid sign-in/sign-up inputs show clear mapped errors (no raw provider text)
-- [x] 1.5 Signup confirm-password mismatch is rejected on the server path as well
-- [x] 1.6 Existing happy-path sign-in/sign-up behavior remains unchanged
+- [x] 1.4 Invalid sign-in/sign-up inputs show clear mapped errors (no raw provider text) — 4cee4b3
+- [x] 1.5 Signup confirm-password mismatch is rejected on the server path as well — 4cee4b3
+- [x] 1.6 Existing happy-path sign-in/sign-up behavior remains unchanged — 4cee4b3
 
 ### Phase 2: Add profile persistence and profile API contract
 
 #### Automated
 
-- [ ] 2.1 Migration artifact exists in `supabase/migrations` and is syntactically loadable by tooling conventions
-- [ ] 2.2 Astro sync still succeeds with new profile route/types: `npx astro sync`
-- [ ] 2.3 Lint passes for new profile service/API code: `npm run lint`
-- [ ] 2.4 Production build succeeds after profile persistence integration: `npm run build`
+- [x] 2.1 Migration artifact exists in `supabase/migrations` and is syntactically loadable by tooling conventions
+- [x] 2.2 Astro sync still succeeds with new profile route/types: `npx astro sync`
+- [x] 2.3 Lint passes for new profile service/API code: `npm run lint`
+- [x] 2.4 Production build succeeds after profile persistence integration: `npm run build`
 
 #### Manual
 
-- [ ] 2.5 Authenticated user can save incomplete profile draft and return later
-- [ ] 2.6 Authenticated user can complete required profile fields and persist completion state
-- [ ] 2.7 Unauthenticated requests to profile API are denied/redirected consistently
+- [x] 2.5 Authenticated user can save incomplete profile draft and return later
+- [x] 2.6 Authenticated user can complete required profile fields and persist completion state
+- [x] 2.7 Unauthenticated requests to profile API are denied/redirected consistently
 
 ### Phase 3: Enforce profile gate and integrate profile UX
 

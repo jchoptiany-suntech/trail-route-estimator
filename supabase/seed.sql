@@ -1,0 +1,2 @@
+-- Intentionally empty seed for local reset compatibility.
+-- Profile rows are user-owned and are created by authenticated app flows.
