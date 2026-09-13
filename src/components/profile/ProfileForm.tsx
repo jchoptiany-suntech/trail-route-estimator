@@ -37,7 +37,6 @@ export default function ProfileForm({
   const [experienceLevel, setExperienceLevel] = useState(initialExperienceLevel ?? "");
   const [weightKg, setWeightKg] = useState(initialWeightKg?.toString() ?? "");
   const [weeklyDistanceKm, setWeeklyDistanceKm] = useState(initialWeeklyDistanceKm?.toString() ?? "");
-  const [action, setAction] = useState<"saveDraft" | "saveComplete">("saveDraft");
   const [errors, setErrors] = useState<FieldErrors>({});
 
   function clearError(field: keyof FieldErrors) {
@@ -66,7 +65,16 @@ export default function ProfileForm({
     return Object.keys(next).length === 0;
   }
 
+  function getSubmitAction(event: React.SubmitEvent<HTMLFormElement>): "saveDraft" | "saveComplete" {
+    const submitter = event.nativeEvent.submitter;
+    if (submitter instanceof HTMLButtonElement && submitter.value === "saveComplete") {
+      return "saveComplete";
+    }
+    return "saveDraft";
+  }
+
   function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
+    const action = getSubmitAction(event);
     if (action === "saveComplete" && !validateComplete()) {
       event.preventDefault();
     }
@@ -74,8 +82,6 @@ export default function ProfileForm({
 
   return (
     <form method="POST" action="/api/profile" className="space-y-4" onSubmit={handleSubmit} noValidate>
-      <input type="hidden" name="action" value={action} />
-
       <div className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-blue-100/70">
         Current status: <span className="font-semibold text-white">{status}</span>
       </div>
@@ -132,9 +138,8 @@ export default function ProfileForm({
       <div className="grid gap-3 sm:grid-cols-2">
         <button
           type="submit"
-          onClick={() => {
-            setAction("saveDraft");
-          }}
+          name="action"
+          value="saveDraft"
           className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/10 px-4 text-sm font-medium text-white transition-colors hover:bg-white/20"
         >
           <Save className="size-4" />
@@ -143,9 +148,8 @@ export default function ProfileForm({
 
         <button
           type="submit"
-          onClick={() => {
-            setAction("saveComplete");
-          }}
+          name="action"
+          value="saveComplete"
           className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 text-sm font-medium text-white transition-colors hover:bg-purple-500"
         >
           Complete profile
