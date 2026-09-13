@@ -293,28 +293,28 @@ Route snapshot schema is additive and independent from existing profile schema. 
 
 #### Automated
 
-- [x] 1.1 Migration file exists in `supabase/migrations` and follows project naming convention.
-- [x] 1.2 Astro type sync succeeds with new route-domain types: `npx astro sync`.
-- [x] 1.3 Lint passes after adding route type contracts: `npm run lint`.
+- [x] 1.1 Migration file exists in `supabase/migrations` and follows project naming convention. — ed9be01
+- [x] 1.2 Astro type sync succeeds with new route-domain types: `npx astro sync`. — ed9be01
+- [x] 1.3 Lint passes after adding route type contracts: `npm run lint`. — ed9be01
 
 #### Manual
 
-- [x] 1.4 Route snapshot migration enforces per-user ownership and RLS boundaries.
-- [x] 1.5 Snapshot contract supports preview map and downstream S-03 feature extraction inputs.
+- [x] 1.4 Route snapshot migration enforces per-user ownership and RLS boundaries. — ed9be01
+- [x] 1.5 Snapshot contract supports preview map and downstream S-03 feature extraction inputs. — ed9be01
 
 ### Phase 2: Implement GPX parsing and route snapshot service
 
 #### Automated
 
-- [ ] 2.1 Astro sync succeeds with new route parser/service modules: `npx astro sync`.
-- [ ] 2.2 Lint passes for parser and service layer code: `npm run lint`.
-- [ ] 2.3 Production build succeeds after route service integration: `npm run build`.
+- [x] 2.1 Astro sync succeeds with new route parser/service modules: `npx astro sync`.
+- [x] 2.2 Lint passes for parser and service layer code: `npm run lint`.
+- [x] 2.3 Production build succeeds after route service integration: `npm run build`.
 
 #### Manual
 
-- [ ] 2.4 Valid GPX input produces normalized points and metadata expected by snapshot service.
-- [ ] 2.5 Malformed GPX and empty-track GPX are rejected with deterministic error categories.
-- [ ] 2.6 Parser/service failure paths preserve the previously stored valid snapshot.
+- [x] 2.4 Valid GPX input produces normalized points and metadata expected by snapshot service.
+- [x] 2.5 Malformed GPX and empty-track GPX are rejected with deterministic error categories.
+- [x] 2.6 Parser/service failure paths preserve the previously stored valid snapshot.
 
 ### Phase 3: Deliver upload endpoint and dashboard mini-map flow
 
