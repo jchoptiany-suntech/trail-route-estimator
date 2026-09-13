@@ -1,4 +1,5 @@
 import type { DifficultyLabel, RouteEstimationSnapshot } from "@/lib/estimation/types";
+import { cn } from "@/lib/utils";
 
 interface RouteEstimationCardProps {
   estimation: RouteEstimationSnapshot;
@@ -39,7 +40,10 @@ export default function RouteEstimationCard({ estimation }: RouteEstimationCardP
       <div className="mb-3 flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-white">Personalized estimation</h2>
         <span
-          className={`rounded-full border px-2.5 py-1 text-xs font-semibold tracking-wide uppercase ${difficultyBadgeClass(estimation.difficulty)}`}
+          className={cn(
+            "rounded-full border px-2.5 py-1 text-xs font-semibold tracking-wide uppercase",
+            difficultyBadgeClass(estimation.difficulty),
+          )}
         >
           {formatDifficultyLabel(estimation.difficulty)}
         </span>

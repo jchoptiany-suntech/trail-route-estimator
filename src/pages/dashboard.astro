@@ -13,10 +13,14 @@ const success = Astro.url.searchParams.get("success");
 const warning = Astro.url.searchParams.get("warning");
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
-const snapshotResult = user && supabase ? await getRouteSnapshotForUser(supabase, user.id) : { data: null };
-const estimationResult = user && supabase ? await getRouteEstimationForUser(supabase, user.id) : { data: null };
+const [snapshotResult, estimationResult] =
+  user && supabase
+    ? await Promise.all([getRouteSnapshotForUser(supabase, user.id), getRouteEstimationForUser(supabase, user.id)])
+    : [{ data: null }, { data: null }];
 const snapshot = snapshotResult.data;
 const estimation = estimationResult.data;
+const estimationWarning =
+  warning ?? (estimationResult.error ? "We could not load your latest personalized estimation right now." : null);
 ---
 
 <Layout title="Dashboard">
@@ -31,9 +35,9 @@ const estimation = estimationResult.data;
         Welcome, <span class="font-semibold text-white">{user?.email}</span>
       </p>
       {
-        warning ? (
+        estimationWarning ? (
           <p class="mb-4 rounded-lg border border-amber-500/30 bg-amber-900/30 px-3 py-2 text-sm text-amber-200">
-            {warning}
+            {estimationWarning}
           </p>
         ) : null
       }

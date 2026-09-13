@@ -334,7 +334,7 @@ Estimation remains synchronous in current SSR/API flow with existing GPX size co
 
 #### Automated
 
-- - [x] 4.1 Astro sync passes with dashboard and estimation component wiring: `npx astro sync`. — 8382b2c
+- [x] 4.1 Astro sync passes with dashboard and estimation component wiring: `npx astro sync`. — 8382b2c
 - [x] 4.2 Repository lint remains green after S-03 integration: `npm run lint`. — 8382b2c
 - [x] 4.3 Production build remains green after S-03 integration: `npm run build`. — 8382b2c
 

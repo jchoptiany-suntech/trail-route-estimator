@@ -1,7 +1,7 @@
 ---
 change_id: personalized-estimation-result
 title: Personalized estimation result
-status: implemented
+status: impl_reviewed
 created: 2026-09-13
 updated: 2026-09-13
 archived_at: null
