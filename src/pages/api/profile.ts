@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { buildAuthErrorRedirect, createAuthFormError } from "@/lib/auth/error-mapping";
 import { recomputeLatestEstimation } from "@/lib/estimation/orchestration";
+import { resolveProfileRecomputeWarning } from "@/lib/estimation/recompute-feedback";
 import {
   getProfileForUser,
   isProfileComplete,
@@ -107,8 +108,9 @@ export const POST: APIRoute = async (context) => {
       profile: data,
     });
 
-    if (!recompute.ok && !recompute.skipped) {
-      return context.redirect(dashboardWarningRedirect(`Profile saved, but ${recompute.error.message.toLowerCase()}`));
+    const recomputeWarning = resolveProfileRecomputeWarning(recompute);
+    if (recomputeWarning) {
+      return context.redirect(dashboardWarningRedirect(recomputeWarning));
     }
 
     return context.redirect("/dashboard");

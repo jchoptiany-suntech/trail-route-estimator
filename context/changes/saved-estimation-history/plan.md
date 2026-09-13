@@ -309,29 +309,29 @@ This change is additive: existing latest tables remain intact. Rollback path rem
 
 #### Automated
 
-- [x] 2.1 Service-level unit tests validate dedupe behavior and stable ordering contracts: `node --test`.
-- [x] 2.2 Lint and type checks pass for service/orchestration changes: `npm run lint`.
-- [x] 2.3 Build remains green with updated service contracts: `npm run build`.
+- [x] 2.1 Service-level unit tests validate dedupe behavior and stable ordering contracts: `node --test`. — c8d9c53
+- [x] 2.2 Lint and type checks pass for service/orchestration changes: `npm run lint`. — c8d9c53
+- [x] 2.3 Build remains green with updated service contracts: `npm run build`. — c8d9c53
 
 #### Manual
 
-- [x] 2.4 Recompute with same route hash + same profile signature does not create duplicate history entries.
-- [x] 2.5 Recompute with changed profile signature for same route creates/updates history according to chosen dedupe contract.
-- [x] 2.6 Returned service data contains fields required by dashboard history rendering.
+- [x] 2.4 Recompute with same route hash + same profile signature does not create duplicate history entries. — c8d9c53
+- [x] 2.5 Recompute with changed profile signature for same route creates/updates history according to chosen dedupe contract. — c8d9c53
+- [x] 2.6 Returned service data contains fields required by dashboard history rendering. — c8d9c53
 
 ### Phase 3: Integrate API flows with explicit partial-failure warnings
 
 #### Automated
 
-- [ ] 3.1 API-level tests cover upload and profile flows for success, dedupe, and history-partial-failure paths: `node --test`.
-- [ ] 3.2 Lint remains green after route/profile API updates: `npm run lint`.
-- [ ] 3.3 Production build remains green after API integration changes: `npm run build`.
+- [x] 3.1 API-level tests cover upload and profile flows for success, dedupe, and history-partial-failure paths: `node --test`.
+- [x] 3.2 Lint remains green after route/profile API updates: `npm run lint`.
+- [x] 3.3 Production build remains green after API integration changes: `npm run build`.
 
 #### Manual
 
-- [ ] 3.4 Uploading GPX updates latest estimation and populates history list data.
-- [ ] 3.5 Updating profile refreshes latest estimation and updates history according to dedupe rule.
-- [ ] 3.6 History-write failure surfaces warning without breaking successful upload/profile outcome.
+- [x] 3.4 Uploading GPX updates latest estimation and populates history list data.
+- [x] 3.5 Updating profile refreshes latest estimation and updates history according to dedupe rule.
+- [x] 3.6 History-write failure surfaces warning without breaking successful upload/profile outcome.
 
 ### Phase 4: Render saved history in dashboard and finalize validation
 

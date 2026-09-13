@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { resolveUploadRecomputeWarning } from "@/lib/estimation/recompute-feedback";
 import { recomputeLatestEstimation } from "@/lib/estimation/orchestration";
 import { getProfileForUser } from "@/lib/profile/service";
 import { createRouteUploadError, mapRouteUploadError } from "@/lib/route/error-mapping";
@@ -74,8 +75,9 @@ export const POST: APIRoute = async (context) => {
       profile: profileResult.data,
     });
 
-    if (!recompute.ok && !recompute.skipped) {
-      return context.redirect(dashboardSuccessWarningRedirect("GPX uploaded successfully.", recompute.error.message));
+    const recomputeWarning = resolveUploadRecomputeWarning(recompute);
+    if (recomputeWarning) {
+      return context.redirect(dashboardSuccessWarningRedirect("GPX uploaded successfully.", recomputeWarning));
     }
   } catch (error) {
     const mapped = mapRouteUploadError(error);
