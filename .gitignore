@@ -26,3 +26,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# local editor config
+.vscode/mcp.json
+
+# local sensitive scratch file
+context/foundation/psw
