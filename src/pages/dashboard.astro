@@ -2,9 +2,11 @@
 import RouteEstimationCard from "@/components/routes/RouteEstimationCard";
 import RouteMiniMap from "@/components/routes/RouteMiniMap";
 import RouteUploadForm from "@/components/routes/RouteUploadForm";
+import SavedEstimationHistory from "@/components/routes/SavedEstimationHistory.astro";
+import { buildSavedEstimationHistoryItems, resolveSavedHistoryWarning } from "@/lib/estimation/history-view";
 import Layout from "@/layouts/Layout.astro";
-import { getRouteEstimationForUser } from "@/lib/estimation/service";
-import { getRouteSnapshotForUser } from "@/lib/route/service";
+import { getRouteEstimationForUser, listRouteEstimationHistoryForUser } from "@/lib/estimation/service";
+import { getRouteSnapshotForUser, listSavedRouteHistoryForUser } from "@/lib/route/service";
 import { createClient } from "@/lib/supabase";
 
 const { user } = Astro.locals;
@@ -13,14 +15,22 @@ const success = Astro.url.searchParams.get("success");
 const warning = Astro.url.searchParams.get("warning");
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
-const [snapshotResult, estimationResult] =
+const [snapshotResult, estimationResult, estimationHistoryResult, routeHistoryResult] =
   user && supabase
-    ? await Promise.all([getRouteSnapshotForUser(supabase, user.id), getRouteEstimationForUser(supabase, user.id)])
-    : [{ data: null }, { data: null }];
+    ? await Promise.all([
+        getRouteSnapshotForUser(supabase, user.id),
+        getRouteEstimationForUser(supabase, user.id),
+        listRouteEstimationHistoryForUser(supabase, user.id),
+        listSavedRouteHistoryForUser(supabase, user.id),
+      ])
+    : [{ data: null }, { data: null }, { data: [] }, { data: [] }];
 const snapshot = snapshotResult.data;
 const estimation = estimationResult.data;
-const estimationWarning =
-  warning ?? (estimationResult.error ? "We could not load your latest personalized estimation right now." : null);
+const estimationWarning = estimationResult.error
+  ? "We could not load your latest personalized estimation right now."
+  : null;
+const historyWarning = resolveSavedHistoryWarning(warning, estimationHistoryResult.error, routeHistoryResult.error);
+const savedHistoryItems = buildSavedEstimationHistoryItems(estimationHistoryResult.data, routeHistoryResult.data);
 ---
 
 <Layout title="Dashboard">
@@ -38,6 +48,13 @@ const estimationWarning =
         estimationWarning ? (
           <p class="mb-4 rounded-lg border border-amber-500/30 bg-amber-900/30 px-3 py-2 text-sm text-amber-200">
             {estimationWarning}
+          </p>
+        ) : null
+      }
+      {
+        historyWarning ? (
+          <p class="mb-4 rounded-lg border border-amber-500/30 bg-amber-900/30 px-3 py-2 text-sm text-amber-200">
+            {historyWarning}
           </p>
         ) : null
       }
@@ -97,6 +114,10 @@ const estimationWarning =
             </p>
           )
         }
+      </div>
+
+      <div class="mt-6">
+        <SavedEstimationHistory items={savedHistoryItems} />
       </div>
     </div>
   </div>

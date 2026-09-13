@@ -323,26 +323,26 @@ This change is additive: existing latest tables remain intact. Rollback path rem
 
 #### Automated
 
-- [x] 3.1 API-level tests cover upload and profile flows for success, dedupe, and history-partial-failure paths: `node --test`.
-- [x] 3.2 Lint remains green after route/profile API updates: `npm run lint`.
-- [x] 3.3 Production build remains green after API integration changes: `npm run build`.
+- [x] 3.1 API-level tests cover upload and profile flows for success, dedupe, and history-partial-failure paths: `node --test`. — 9ad98f4
+- [x] 3.2 Lint remains green after route/profile API updates: `npm run lint`. — 9ad98f4
+- [x] 3.3 Production build remains green after API integration changes: `npm run build`. — 9ad98f4
 
 #### Manual
 
-- [x] 3.4 Uploading GPX updates latest estimation and populates history list data.
-- [x] 3.5 Updating profile refreshes latest estimation and updates history according to dedupe rule.
-- [x] 3.6 History-write failure surfaces warning without breaking successful upload/profile outcome.
+- [x] 3.4 Uploading GPX updates latest estimation and populates history list data. — 9ad98f4
+- [x] 3.5 Updating profile refreshes latest estimation and updates history according to dedupe rule. — 9ad98f4
+- [x] 3.6 History-write failure surfaces warning without breaking successful upload/profile outcome. — 9ad98f4
 
 ### Phase 4: Render saved history in dashboard and finalize validation
 
 #### Automated
 
-- [ ] 4.1 SSR/dashboard integration tests validate history rendering scenarios: `node --test`.
-- [ ] 4.2 Astro sync and lint pass with new dashboard/history components: `npx astro sync` and `npm run lint`.
-- [ ] 4.3 Production build succeeds with S-04 history UI enabled: `npm run build`.
+- [x] 4.1 SSR/dashboard integration tests validate history rendering scenarios: `node --test`.
+- [x] 4.2 Astro sync and lint pass with new dashboard/history components: `npx astro sync` and `npm run lint`.
+- [x] 4.3 Production build succeeds with S-04 history UI enabled: `npm run build`.
 
 #### Manual
 
-- [ ] 4.4 User sees saved estimation history ordered by `computed_at DESC`, tie-break `id DESC`.
-- [ ] 4.5 History entries include lightweight route context and estimation summary.
-- [ ] 4.6 Empty-history and warning states are clear and do not regress latest estimation card UX.
+- [x] 4.4 User sees saved estimation history ordered by `computed_at DESC`, tie-break `id DESC`.
+- [x] 4.5 History entries include lightweight route context and estimation summary.
+- [x] 4.6 Empty-history and warning states are clear and do not regress latest estimation card UX.

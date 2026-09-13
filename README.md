@@ -146,13 +146,13 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 
 ### Auth routes
 
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/profile`            | Authenticated sport profile form (draft + complete states)              |
-| `/dashboard`          | Protected route dashboard with GPX upload and latest route mini-map      |
+| Route                 | Description                                                         |
+| --------------------- | ------------------------------------------------------------------- |
+| `/auth/signin`        | Email/password sign-in form                                         |
+| `/auth/signup`        | Email/password sign-up form                                         |
+| `/auth/confirm-email` | Post-signup "check your inbox" page                                 |
+| `/profile`            | Authenticated sport profile form (draft + complete states)          |
+| `/dashboard`          | Protected route dashboard with GPX upload and latest route mini-map |
 
 Route protection is handled in `src/middleware.ts`. `/profile` is auth-protected, and `/dashboard` additionally requires a completed profile.
 
@@ -173,9 +173,12 @@ Route protection is handled in `src/middleware.ts`. `/profile` is auth-protected
 ### Personalized estimation notes
 
 - Personalized estimation is persisted as **latest result per user** in `public.route_estimations`.
+- Saved estimation history is persisted in `public.route_estimation_history`, deduplicated by `route_hash + profile_signature`.
+- Saved route context is persisted in `public.saved_route_history` (one route context row per `user_id + route_hash`).
 - Estimation recompute is triggered after successful route upload and after completed profile updates.
 - Dashboard shows estimated completion time, difficulty label (`easy`, `medium`, `hard`), and key derived metrics.
-- If estimation recompute fails, route context remains available and the UI surfaces a warning message.
+- Saved history is shown in deterministic order: `computed_at DESC` with `id DESC` tie-break.
+- If history persistence/load fails, latest estimation remains available and the UI surfaces a warning message.
 
 ## Deployment
 

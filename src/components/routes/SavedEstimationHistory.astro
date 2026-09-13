@@ -1,0 +1,77 @@
+---
+import type { SavedEstimationHistoryItem } from "@/lib/estimation/history-view";
+
+interface Props {
+  items: SavedEstimationHistoryItem[];
+}
+
+const { items } = Astro.props;
+
+function formatEstimatedTime(minutes: number): string {
+  const roundedMinutes = Math.max(0, Math.round(minutes));
+  const hours = Math.floor(roundedMinutes / 60);
+  const remainingMinutes = roundedMinutes % 60;
+
+  if (hours === 0) {
+    return `${roundedMinutes} min`;
+  }
+  if (remainingMinutes === 0) {
+    return `${hours} h`;
+  }
+
+  return `${hours} h ${remainingMinutes} min`;
+}
+
+function formatDifficultyLabel(label: string): string {
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+function formatComputedAt(iso: string): string {
+  return new Date(iso).toLocaleString("en-US", {
+    hour12: false,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+---
+
+<div class="rounded-xl border border-white/10 bg-white/5 p-4">
+  <h2 class="mb-3 text-lg font-semibold text-white">Saved estimation history</h2>
+  {
+    items.length > 0 ? (
+      <ul class="space-y-3">
+        {items.map((item) => (
+          <li class="rounded-lg border border-white/10 bg-white/5 p-3">
+            <div class="mb-1 flex items-center justify-between gap-3 text-sm">
+              <p class="font-medium text-white">{item.sourceFileName ?? "Saved route"}</p>
+              <p class="text-blue-100/60">{formatComputedAt(item.computedAt)}</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-sm text-blue-100/75">
+              <p>
+                <span class="text-blue-100/55">Estimated time:</span> {formatEstimatedTime(item.estimatedTimeMinutes)}
+              </p>
+              <p>
+                <span class="text-blue-100/55">Difficulty:</span> {formatDifficultyLabel(item.difficulty)}
+              </p>
+              <p>
+                <span class="text-blue-100/55">Distance:</span>{" "}
+                {item.totalDistanceM !== null ? `${(item.totalDistanceM / 1000).toFixed(2)} km` : "n/a"}
+              </p>
+              <p>
+                <span class="text-blue-100/55">Elevation gain:</span>{" "}
+                {item.elevationGainM !== null ? `${item.elevationGainM.toFixed(0)} m` : "n/a"}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="text-sm text-blue-100/70">
+        No saved estimations yet. Upload a route and keep your profile complete to populate history.
+      </p>
+    )
+  }
+</div>
