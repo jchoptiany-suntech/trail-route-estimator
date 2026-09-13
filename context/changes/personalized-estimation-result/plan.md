@@ -334,13 +334,13 @@ Estimation remains synchronous in current SSR/API flow with existing GPX size co
 
 #### Automated
 
-- [x] 4.1 Astro sync passes with dashboard and estimation component wiring: `npx astro sync`.
-- [x] 4.2 Repository lint remains green after S-03 integration: `npm run lint`.
-- [x] 4.3 Production build remains green after S-03 integration: `npm run build`.
+- - [x] 4.1 Astro sync passes with dashboard and estimation component wiring: `npx astro sync`. — 8382b2c
+- [x] 4.2 Repository lint remains green after S-03 integration: `npm run lint`. — 8382b2c
+- [x] 4.3 Production build remains green after S-03 integration: `npm run build`. — 8382b2c
 
 #### Manual
 
-- [x] 4.4 User with complete profile and GPX sees personalized time and difficulty.
-- [x] 4.5 Re-uploading GPX refreshes latest estimation result.
-- [x] 4.6 Updating profile refreshes estimation for existing latest route.
-- [x] 4.7 Estimation failures preserve route context visibility with explicit warning.
+- [x] 4.4 User with complete profile and GPX sees personalized time and difficulty. — 8382b2c
+- [x] 4.5 Re-uploading GPX refreshes latest estimation result. — 8382b2c
+- [x] 4.6 Updating profile refreshes estimation for existing latest route. — 8382b2c
+- [x] 4.7 Estimation failures preserve route context visibility with explicit warning. — 8382b2c
