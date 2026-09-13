@@ -343,30 +343,30 @@ Profile schema rollout is additive and should not alter existing auth session be
 
 #### Automated
 
-- [x] 2.1 Migration artifact exists in `supabase/migrations` and is syntactically loadable by tooling conventions
-- [x] 2.2 Astro sync still succeeds with new profile route/types: `npx astro sync`
-- [x] 2.3 Lint passes for new profile service/API code: `npm run lint`
-- [x] 2.4 Production build succeeds after profile persistence integration: `npm run build`
+- [x] 2.1 Migration artifact exists in `supabase/migrations` and is syntactically loadable by tooling conventions — 1fa638c
+- [x] 2.2 Astro sync still succeeds with new profile route/types: `npx astro sync` — 1fa638c
+- [x] 2.3 Lint passes for new profile service/API code: `npm run lint` — 1fa638c
+- [x] 2.4 Production build succeeds after profile persistence integration: `npm run build` — 1fa638c
 
 #### Manual
 
-- [x] 2.5 Authenticated user can save incomplete profile draft and return later
-- [x] 2.6 Authenticated user can complete required profile fields and persist completion state
-- [x] 2.7 Unauthenticated requests to profile API are denied/redirected consistently
+- [x] 2.5 Authenticated user can save incomplete profile draft and return later — 1fa638c
+- [x] 2.6 Authenticated user can complete required profile fields and persist completion state — 1fa638c
+- [x] 2.7 Unauthenticated requests to profile API are denied/redirected consistently — 1fa638c
 
 ### Phase 3: Enforce profile gate and integrate profile UX
 
 #### Automated
 
-- [ ] 3.1 Astro sync succeeds with new route + middleware type usage: `npx astro sync`
-- [ ] 3.2 Lint passes for profile UI and middleware updates: `npm run lint`
-- [ ] 3.3 Production build succeeds with gating and new page integration: `npm run build`
+- [x] 3.1 Astro sync succeeds with new route + middleware type usage: `npx astro sync`
+- [x] 3.2 Lint passes for profile UI and middleware updates: `npm run lint`
+- [x] 3.3 Production build succeeds with gating and new page integration: `npm run build`
 
 #### Manual
 
-- [ ] 3.4 Authenticated user with incomplete profile is redirected to `/profile`
-- [ ] 3.5 Completing required profile fields unlocks access to `/dashboard`
-- [ ] 3.6 Gate policy does not break sign-out, sign-in, or public-page navigation
+- [x] 3.4 Authenticated user with incomplete profile is redirected to `/profile`
+- [x] 3.5 Completing required profile fields unlocks access to `/dashboard`
+- [x] 3.6 Gate policy does not break sign-out, sign-in, or public-page navigation
 
 ### Phase 4: Verification matrix and documentation handoff
 

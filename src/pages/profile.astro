@@ -1,0 +1,33 @@
+---
+import ProfileForm from "@/components/profile/ProfileForm";
+import Layout from "@/layouts/Layout.astro";
+
+const profile = Astro.locals.profile;
+const error = Astro.url.searchParams.get("error");
+const success = Astro.url.searchParams.get("success");
+---
+
+<Layout title="Profile">
+  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+      <h1
+        class="mb-2 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent"
+      >
+        Sport profile
+      </h1>
+      <p class="mb-6 text-center text-sm text-blue-100/70">
+        Complete your profile to unlock dashboard and the next trail estimation steps.
+      </p>
+
+      <ProfileForm
+        initialExperienceLevel={profile?.experienceLevel}
+        initialWeightKg={profile?.weightKg}
+        initialWeeklyDistanceKm={profile?.weeklyDistanceKm}
+        status={profile?.status ?? "draft"}
+        serverError={error}
+        serverSuccess={success}
+        client:load
+      />
+    </div>
+  </div>
+</Layout>
