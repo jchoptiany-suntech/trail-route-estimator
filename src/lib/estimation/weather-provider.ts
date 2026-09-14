@@ -1,4 +1,5 @@
 import { OPEN_METEO_BASE_URL, OPEN_METEO_TIMEOUT_MS } from "astro:env/server";
+import { WEATHER_GLOBAL_MULTIPLIER_NEUTRAL, type WeatherSignalResolution } from "@/lib/estimation/types";
 
 interface WeatherAtTime {
   temperatureC: number;
@@ -97,5 +98,59 @@ export async function fetchWeatherAtRunTime(
     };
   } finally {
     clearTimeout(timeout);
+  }
+}
+
+interface WeatherSignalInput {
+  startLat: number;
+  startLng: number;
+  plannedRunAt: string | null;
+}
+
+export async function resolveWeatherSignalFromProvider(
+  input: WeatherSignalInput,
+  weatherProviderError?: Error | null,
+): Promise<WeatherSignalResolution> {
+  if (!input.plannedRunAt) {
+    return {
+      status: "not_applicable",
+      source: "open-meteo",
+      meanTemperatureC: null,
+      globalTimeMultiplier: WEATHER_GLOBAL_MULTIPLIER_NEUTRAL,
+      message: "Weather impact was skipped because no run datetime was provided.",
+      asOf: null,
+    };
+  }
+
+  if (weatherProviderError) {
+    return {
+      status: "provider_error",
+      source: "open-meteo",
+      meanTemperatureC: null,
+      globalTimeMultiplier: WEATHER_GLOBAL_MULTIPLIER_NEUTRAL,
+      message: "Weather provider is unavailable, so a neutral weather factor was applied.",
+      asOf: null,
+    };
+  }
+
+  try {
+    const weather = await fetchWeatherAtRunTime(input.startLat, input.startLng, input.plannedRunAt);
+    return {
+      status: "available",
+      source: "open-meteo",
+      meanTemperatureC: weather.temperatureC,
+      globalTimeMultiplier: weather.globalTimeMultiplier,
+      message: null,
+      asOf: weather.asOf,
+    };
+  } catch {
+    return {
+      status: "provider_error",
+      source: "open-meteo",
+      meanTemperatureC: null,
+      globalTimeMultiplier: WEATHER_GLOBAL_MULTIPLIER_NEUTRAL,
+      message: "Weather provider is unavailable, so a neutral weather factor was applied.",
+      asOf: null,
+    };
   }
 }

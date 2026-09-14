@@ -14,11 +14,10 @@ import {
   ITRA_GLOBAL_MULTIPLIER_NEUTRAL,
   ITRA_GLOBAL_MULTIPLIER_MAX,
   ITRA_GLOBAL_MULTIPLIER_MIN,
-  WEATHER_GLOBAL_MULTIPLIER_NEUTRAL,
   type ExternalSignalResolution,
   type RouteEstimationSnapshot,
 } from "@/lib/estimation/types";
-import { fetchWeatherAtRunTime } from "@/lib/estimation/weather-provider";
+import { resolveWeatherSignalFromProvider } from "@/lib/estimation/weather-provider";
 import { isProfileComplete, type SportProfile } from "@/lib/profile/service";
 import type { RouteSnapshot } from "@/lib/route/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -91,61 +90,13 @@ function resolveItraSignal(itraIndex: number | null): ExternalSignalResolutionRe
   };
 }
 
-async function resolveWeatherSignal(
-  snapshot: RouteSnapshot,
-  weatherProviderError?: Error | null,
-): Promise<ExternalSignalResolutionResult["externalSignals"]["weather"]> {
-  if (!snapshot.plannedRunAt) {
-    return {
-      status: "not_applicable",
-      source: "open-meteo",
-      meanTemperatureC: null,
-      globalTimeMultiplier: WEATHER_GLOBAL_MULTIPLIER_NEUTRAL,
-      message: "Weather impact was skipped because no run datetime was provided.",
-      asOf: null,
-    };
-  }
-
-  if (weatherProviderError) {
-    return {
-      status: "provider_error",
-      source: "open-meteo",
-      meanTemperatureC: null,
-      globalTimeMultiplier: WEATHER_GLOBAL_MULTIPLIER_NEUTRAL,
-      message: "Weather provider is unavailable, so a neutral weather factor was applied.",
-      asOf: null,
-    };
-  }
-
-  try {
-    const weather = await fetchWeatherAtRunTime(snapshot.startLat, snapshot.startLng, snapshot.plannedRunAt);
-    return {
-      status: "available",
-      source: "open-meteo",
-      meanTemperatureC: weather.temperatureC,
-      globalTimeMultiplier: weather.globalTimeMultiplier,
-      message: null,
-      asOf: weather.asOf,
-    };
-  } catch {
-    return {
-      status: "provider_error",
-      source: "open-meteo",
-      meanTemperatureC: null,
-      globalTimeMultiplier: WEATHER_GLOBAL_MULTIPLIER_NEUTRAL,
-      message: "Weather provider is unavailable, so a neutral weather factor was applied.",
-      asOf: null,
-    };
-  }
-}
-
 async function resolveExternalSignals(
   snapshot: RouteSnapshot,
   itraIndex: number | null,
   weatherProviderError?: Error | null,
 ): Promise<ExternalSignalResolutionResult> {
   const itra = resolveItraSignal(itraIndex);
-  const weather = await resolveWeatherSignal(snapshot, weatherProviderError);
+  const weather = await resolveWeatherSignalFromProvider(snapshot, weatherProviderError);
   const warnings: string[] = [];
 
   if (itra.message) {
