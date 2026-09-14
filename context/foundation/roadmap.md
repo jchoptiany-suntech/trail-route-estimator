@@ -49,8 +49,8 @@ People planning mountain trail runs need a more reliable estimate of route diffi
 | S-03 | personalized-estimation-result | run route analysis and receive personalized time and difficulty estimation | S-01, S-02 | FR-005, FR-006, US-01 | done |
 | S-04 | saved-estimation-history | save generated estimations and view saved routes history | S-03 | FR-004, FR-008, US-01 | done |
 | F-01 | external-signal-contracts | (foundation) define external signal contracts and fallback policy for weather and runner indices | S-03 | FR-005, FR-006, NFR-accuracy, MS-01, MS-02 | done |
-| S-05 | enriched-estimation-signals | receive enriched estimation with runner-index and weather factors, plus average pace output | F-01, S-04 | FR-005, FR-006, US-01, MS-01, MS-02, MS-03 | proposed |
-| S-06 | enriched-estimation-history | revisit saved estimation history entries with enriched-signal context and pace consistency | S-05 | FR-004, FR-008, US-01, MS-03 | proposed |
+| S-05 | enriched-estimation-signals | receive enriched estimation with runner-index and weather factors, plus average pace output | F-01, S-04 | FR-005, FR-006, US-01, MS-01, MS-02, MS-03 | done |
+| S-06 | enriched-estimation-history | revisit saved estimation history entries with enriched-signal context and pace consistency | S-05 | FR-004, FR-008, US-01, MS-03 | done |
 
 ## Baseline
 
@@ -143,7 +143,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
   - Runner index selected: ITRA only (decision captured 2026-09-14). — Owner: user. Block: no.
   - What fallback should user see when Open-Meteo data is unavailable for selected time/location, with weather treated as optional input? — Owner: user. Block: no.
 - **Risk:** Pulling in multiple signals without a strict fallback path can reduce trust in estimates even if calculations become more complex.
-- **Status:** ready
+- **Status:** done
 
 ### S-06: Enriched estimation history continuity
 
@@ -156,7 +156,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Unknowns:**
   - History policy selected: freeze external-signal snapshot at save-time; provide explicit "recompute estimation" action to refresh with latest provider data on demand. — Owner: user. Block: no.
 - **Risk:** If persistence semantics for external signals are unclear, history can become inconsistent and hard to interpret.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -190,3 +190,5 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-03: user can run analysis and receive personalized route time estimation with an easy/medium/hard difficulty label.** — Archived 2026-09-13 → `context/archive/2026-09-13-personalized-estimation-result/`. Lesson: —.
 - **S-04: user can save generated estimations and revisit saved routes and estimation history.** — Archived 2026-09-13 → `context/archive/2026-09-13-saved-estimation-history/`. Lesson: —.
 - **F-01: (foundation) external weather and ITRA inputs have a defined contract, confidence/fallback behavior, and gating rules before user-facing enrichment is expanded, with weather kept optional.** — Archived 2026-09-14 → `context/archive/2026-09-14-external-signal-contracts/`. Lesson: —.
+- **S-05: user can receive enriched route estimation that incorporates runner-index and optional weather context and displays predicted average pace.** — Archived 2026-09-14 → `context/archive/2026-09-14-enriched-estimation-signals/`. Lesson: —.
+- **S-06: user can revisit saved estimation history with enriched context and pace values that remain coherent across recomputes.** — Archived 2026-09-14 → `context/archive/2026-09-14-enriched-estimation-history/`. Lesson: —.
