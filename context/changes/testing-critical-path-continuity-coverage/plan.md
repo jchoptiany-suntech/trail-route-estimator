@@ -274,13 +274,13 @@ No schema or data migration is introduced in this phase. This plan only adds/mod
 
 #### Automated
 
-- [x] 3.1 Expanded history continuity contracts pass: `node --test tests/estimation-history-contracts.test.js`
-- [x] 3.2 Combined continuity-focused integration suite passes: `node --test tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js`
-- [x] 3.3 Full targeted continuity test pack passes together: `node --test tests/api-recompute-feedback.test.js tests/dashboard-history-view.test.js tests/estimation-history-contracts.test.js tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js`
-- [x] 3.4 Lint remains clean for all touched tests: `npm run lint -- tests/api-recompute-feedback.test.js tests/dashboard-history-view.test.js tests/estimation-history-contracts.test.js tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js`
+- [x] 3.1 Expanded history continuity contracts pass: `node --test tests/estimation-history-contracts.test.js` — 8bd1e52
+- [x] 3.2 Combined continuity-focused integration suite passes: `node --test tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js` — 8bd1e52
+- [x] 3.3 Full targeted continuity test pack passes together: `node --test tests/api-recompute-feedback.test.js tests/dashboard-history-view.test.js tests/estimation-history-contracts.test.js tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js` — 8bd1e52
+- [x] 3.4 Lint remains clean for all touched tests: `npm run lint -- tests/api-recompute-feedback.test.js tests/dashboard-history-view.test.js tests/estimation-history-contracts.test.js tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js` — 8bd1e52
 
 #### Manual
 
-- [x] 3.5 Repeated recompute semantics are understandable as continuity versions, not opaque duplicates
-- [x] 3.6 Mismatch scenarios are explicit about which identity element changed (route hash, profile signature, or version context)
-- [x] 3.7 The final scenario set is still limited to Phase 1 risk scope (#1, #2)
+- [x] 3.5 Repeated recompute semantics are understandable as continuity versions, not opaque duplicates — 8bd1e52
+- [x] 3.6 Mismatch scenarios are explicit about which identity element changed (route hash, profile signature, or version context) — 8bd1e52
+- [x] 3.7 The final scenario set is still limited to Phase 1 risk scope (#1, #2) — 8bd1e52

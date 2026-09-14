@@ -234,16 +234,16 @@ Additive RLS policy migration only; no data backfill required. Existing FK behav
 
 #### Automated
 
-- [x] 2.1 Add per-card X delete form in SavedEstimationHistory.astro
-- [x] 2.2 Pass protected current-route context from dashboard into history UI
-- [x] 2.3 Render deterministic dashboard status banners for delete outcomes
-- [x] 2.4 Pass lint/build for dashboard and history UI updates
+- [x] 2.1 Add per-card X delete form in SavedEstimationHistory.astro — 227e1f4
+- [x] 2.2 Pass protected current-route context from dashboard into history UI — 227e1f4
+- [x] 2.3 Render deterministic dashboard status banners for delete outcomes — 227e1f4
+- [x] 2.4 Pass lint/build for dashboard and history UI updates — 227e1f4
 
 #### Manual
 
-- [x] 2.5 Confirm each deletable card shows top-right X with native confirm
-- [x] 2.6 Confirm protected current-route card cannot be deleted
-- [x] 2.7 Confirm success/error banners match delete outcomes
+- [x] 2.5 Confirm each deletable card shows top-right X with native confirm — 227e1f4
+- [x] 2.6 Confirm protected current-route card cannot be deleted — 227e1f4
+- [x] 2.7 Confirm success/error banners match delete outcomes — 227e1f4
 
 ### Phase 3: Coverage and regression safety
 
