@@ -1,9 +1,10 @@
 ---
 change_id: enriched-estimation-signals
 title: Enriched estimation signals
-status: impl_reviewed
+status: archived
 created: 2026-09-14
 updated: 2026-09-14
+archived_at: 2026-09-14T13:36:30Z
 ---
 
 ## Notes
