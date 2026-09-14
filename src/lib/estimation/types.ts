@@ -99,6 +99,14 @@ export interface RouteEstimationHistoryEntry extends RouteEstimationComputation,
   id: number;
   userId: string;
   deduplicationKey: RouteEstimationDeduplicationKey;
+  historyVersion: number;
+  recomputedFromHistoryId: number | null;
+  isLegacy: boolean;
+  sourceFileName: string | null;
+  totalDistanceM: number | null;
+  elevationGainM: number | null;
+  plannedRunAt: string | null;
+  plannedRunTimezoneOffsetMinutes: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -108,6 +116,14 @@ export interface RouteEstimationHistoryRow {
   user_id: string;
   route_hash: string;
   profile_signature: string;
+  history_version: number;
+  recomputed_from_history_id: number | null;
+  is_legacy: boolean;
+  source_file_name: string | null;
+  total_distance_m: number | null;
+  elevation_gain_m: number | null;
+  planned_run_at: string | null;
+  planned_run_timezone_offset_minutes: number | null;
   estimated_time_minutes: number;
   difficulty: DifficultyLabel;
   average_slope_percent: number | null;

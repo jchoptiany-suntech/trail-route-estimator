@@ -13,7 +13,7 @@ import type { RouteSnapshot } from "@/lib/route/types";
 const ROUTE_ESTIMATION_SELECT =
   "user_id, estimated_time_minutes, difficulty, average_slope_percent, effort_score, derived_metrics, source_uploaded_at, profile_updated_at, computed_at, created_at, updated_at";
 const ROUTE_ESTIMATION_HISTORY_SELECT =
-  "id, user_id, route_hash, profile_signature, estimated_time_minutes, difficulty, average_slope_percent, effort_score, derived_metrics, source_uploaded_at, profile_updated_at, computed_at, created_at, updated_at";
+  "id, user_id, route_hash, profile_signature, history_version, recomputed_from_history_id, is_legacy, source_file_name, total_distance_m, elevation_gain_m, planned_run_at, planned_run_timezone_offset_minutes, estimated_time_minutes, difficulty, average_slope_percent, effort_score, derived_metrics, source_uploaded_at, profile_updated_at, computed_at, created_at, updated_at";
 
 function mapRowToRouteEstimation(row: RouteEstimationRow): RouteEstimationSnapshot {
   return {
@@ -37,6 +37,14 @@ function mapRowToRouteEstimationHistory(row: RouteEstimationHistoryRow): RouteEs
       routeHash: row.route_hash,
       profileSignature: row.profile_signature,
     },
+    historyVersion: row.history_version,
+    recomputedFromHistoryId: row.recomputed_from_history_id ?? null,
+    isLegacy: row.is_legacy,
+    sourceFileName: row.source_file_name ?? null,
+    totalDistanceM: row.total_distance_m ?? null,
+    elevationGainM: row.elevation_gain_m ?? null,
+    plannedRunAt: row.planned_run_at ?? null,
+    plannedRunTimezoneOffsetMinutes: row.planned_run_timezone_offset_minutes ?? null,
     estimatedTimeMinutes: row.estimated_time_minutes,
     difficulty: row.difficulty,
     derivedMetrics: row.derived_metrics,
@@ -135,6 +143,14 @@ export async function upsertRouteEstimationHistoryEntryForUser(
     user_id: userId,
     route_hash: deduplicationKey.routeHash,
     profile_signature: deduplicationKey.profileSignature,
+    history_version: 1,
+    recomputed_from_history_id: null,
+    is_legacy: false,
+    source_file_name: null,
+    total_distance_m: null,
+    elevation_gain_m: null,
+    planned_run_at: null,
+    planned_run_timezone_offset_minutes: null,
     estimated_time_minutes: result.estimatedTimeMinutes,
     difficulty: result.difficulty,
     average_slope_percent: result.derivedMetrics.averageSlopePercent,
@@ -147,7 +163,7 @@ export async function upsertRouteEstimationHistoryEntryForUser(
 
   const { data, error } = await supabase
     .from("route_estimation_history")
-    .upsert(payload, { onConflict: "user_id,route_hash,profile_signature" })
+    .upsert(payload, { onConflict: "user_id,route_hash,profile_signature,history_version" })
     .select(ROUTE_ESTIMATION_HISTORY_SELECT)
     .single<RouteEstimationHistoryRow>();
 

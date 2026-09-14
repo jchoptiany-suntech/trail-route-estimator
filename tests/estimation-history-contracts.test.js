@@ -375,7 +375,7 @@ void test("history list ordering contracts are stable", () => {
 
 void test("history upserts keep explicit dedupe conflict keys", () => {
   const output = runHistoryContractsProbe();
-  assert.match(output, /estimationUpsertConflict=user_id,route_hash,profile_signature/);
+  assert.match(output, /estimationUpsertConflict=user_id,route_hash,profile_signature,history_version/);
   assert.match(output, /savedRouteUpsertConflict=user_id,route_hash/);
 });
 
