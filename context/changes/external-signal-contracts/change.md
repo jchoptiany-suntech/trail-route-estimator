@@ -1,7 +1,7 @@
 ---
 change_id: external-signal-contracts
 title: External signal contracts
-status: implementing
+status: implemented
 created: 2026-09-14
 updated: 2026-09-14
 ---

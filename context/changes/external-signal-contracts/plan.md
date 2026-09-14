@@ -267,11 +267,11 @@ Preferowany brak nowej migracji schematu: sygnały external pozostają w `derive
 
 #### Automated
 
-- [x] 3.1 Silnik estymacji przechodzi rozszerzone testy kontraktowe
-- [x] 3.2 Warning flow przechodzi testy API feedback
-- [x] 3.3 Persist/dedupe contracts przechodzą testy historii
-- [x] 3.4 Build i lint całej zmiany przechodzą
+- [x] 3.1 Silnik estymacji przechodzi rozszerzone testy kontraktowe — 8f184ae
+- [x] 3.2 Warning flow przechodzi testy API feedback — 8f184ae
+- [x] 3.3 Persist/dedupe contracts przechodzą testy historii — 8f184ae
+- [x] 3.4 Build i lint całej zmiany przechodzą — 8f184ae
 
 #### Manual
 
-- [x] 3.5 Review test coverage potwierdza, że każdy fallback path ma odpowiadający przypadek
+- [x] 3.5 Review test coverage potwierdza, że każdy fallback path ma odpowiadający przypadek — 8f184ae
