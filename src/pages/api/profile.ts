@@ -4,7 +4,10 @@ import { recomputeLatestEstimation } from "@/lib/estimation/orchestration";
 import { resolveProfileRecomputeWarning } from "@/lib/estimation/recompute-feedback";
 import {
   getProfileForUser,
+  ITRA_INDEX_MAX,
+  ITRA_INDEX_MIN,
   isProfileComplete,
+  isItraIndexInRange,
   upsertProfileForUser,
   type ProfileDraftInput,
   type ProfileStatus,
@@ -91,6 +94,12 @@ export const POST: APIRoute = async (context) => {
   const action = parseAction(form);
   const input = parseDraftInput(form);
   const targetStatus: ProfileStatus = action === "saveComplete" ? "complete" : "draft";
+
+  if (!isItraIndexInRange(input.itraIndex)) {
+    return context.redirect(
+      profileErrorRedirect(`ITRA index must be an integer between ${ITRA_INDEX_MIN} and ${ITRA_INDEX_MAX}.`),
+    );
+  }
 
   if (targetStatus === "complete" && !isProfileComplete(input)) {
     return context.redirect(profileErrorRedirect("Please complete all required profile fields."));

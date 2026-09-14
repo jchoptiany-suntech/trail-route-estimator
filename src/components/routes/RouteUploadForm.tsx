@@ -15,6 +15,19 @@ export default function RouteUploadForm({ serverError, serverSuccess, hasSnapsho
       </div>
 
       <div className="space-y-2">
+        <label htmlFor="plannedRunAt" className="block text-sm font-medium text-white">
+          Planned run start (date & time)
+        </label>
+        <input
+          id="plannedRunAt"
+          name="plannedRunAt"
+          type="datetime-local"
+          className="block w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white"
+        />
+        <p className="text-xs text-blue-100/70">Optional. Used for weather-aware estimation context.</p>
+      </div>
+
+      <div className="space-y-2">
         <label htmlFor="gpxFile" className="block text-sm font-medium text-white">
           GPX file
         </label>

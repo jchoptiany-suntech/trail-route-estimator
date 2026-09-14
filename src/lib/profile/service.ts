@@ -1,12 +1,22 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type ProfileStatus = "draft" | "complete";
+export const ITRA_INDEX_MIN = 1;
+export const ITRA_INDEX_MAX = 1000;
 
 export interface ProfileDraftInput {
   experienceLevel: string | null;
   weightKg: number | null;
   weeklyDistanceKm: number | null;
   itraIndex: number | null;
+}
+
+export function isItraIndexInRange(value: number | null): boolean {
+  if (value === null) {
+    return true;
+  }
+
+  return Number.isInteger(value) && value >= ITRA_INDEX_MIN && value <= ITRA_INDEX_MAX;
 }
 
 export interface SportProfile extends ProfileDraftInput {

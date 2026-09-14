@@ -26,6 +26,20 @@ function dashboardSuccessWarningRedirect(success: string, warning: string): stri
   return `/dashboard?${params.toString()}`;
 }
 
+function parseOptionalPlannedRunAt(formData: FormData): { value: string | null; error: string | null } {
+  const raw = formData.get("plannedRunAt");
+  if (typeof raw !== "string" || raw.trim() === "") {
+    return { value: null, error: null };
+  }
+
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) {
+    return { value: null, error: "Planned run start must be a valid date and time." };
+  }
+
+  return { value: parsed.toISOString(), error: null };
+}
+
 export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
@@ -44,6 +58,10 @@ export const POST: APIRoute = async (context) => {
 
   const form = await context.request.formData();
   const maybeFile = form.get("gpxFile");
+  const plannedRunAt = parseOptionalPlannedRunAt(form);
+  if (plannedRunAt.error) {
+    return context.redirect(dashboardErrorRedirect(plannedRunAt.error));
+  }
 
   if (!(maybeFile instanceof File)) {
     const error = createRouteUploadError("missing_file");
@@ -54,7 +72,10 @@ export const POST: APIRoute = async (context) => {
     validateGpxFileMetadata(maybeFile.name, maybeFile.type, maybeFile.size);
     const fileText = await maybeFile.text();
     const parsed = parseGpxSnapshotFromText(maybeFile.name, maybeFile.size, fileText);
-    const { data: snapshot, error } = await upsertRouteSnapshotForUser(supabase, user.id, parsed.snapshot);
+    const { data: snapshot, error } = await upsertRouteSnapshotForUser(supabase, user.id, {
+      ...parsed.snapshot,
+      plannedRunAt: plannedRunAt.value,
+    });
 
     if (error) {
       const mapped = createRouteUploadError("storage_failure");

@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Activity, CircleCheck, Save, Weight } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { ServerError } from "@/components/auth/ServerError";
+import { ITRA_INDEX_MAX, ITRA_INDEX_MIN } from "@/lib/profile/service";
 
 interface ProfileFormProps {
   initialExperienceLevel?: string | null;
   initialWeightKg?: number | null;
   initialWeeklyDistanceKm?: number | null;
+  initialItraIndex?: number | null;
   status?: "draft" | "complete";
   serverError?: string | null;
   serverSuccess?: string | null;
@@ -16,6 +18,7 @@ interface FieldErrors {
   experienceLevel?: string;
   weightKg?: string;
   weeklyDistanceKm?: string;
+  itraIndex?: string;
 }
 
 function parseNumber(value: string): number | null {
@@ -30,6 +33,7 @@ export default function ProfileForm({
   initialExperienceLevel,
   initialWeightKg,
   initialWeeklyDistanceKm,
+  initialItraIndex,
   status = "draft",
   serverError,
   serverSuccess,
@@ -37,6 +41,7 @@ export default function ProfileForm({
   const [experienceLevel, setExperienceLevel] = useState(initialExperienceLevel ?? "");
   const [weightKg, setWeightKg] = useState(initialWeightKg?.toString() ?? "");
   const [weeklyDistanceKm, setWeeklyDistanceKm] = useState(initialWeeklyDistanceKm?.toString() ?? "");
+  const [itraIndex, setItraIndex] = useState(initialItraIndex?.toString() ?? "");
   const [errors, setErrors] = useState<FieldErrors>({});
 
   function clearError(field: keyof FieldErrors) {
@@ -59,6 +64,11 @@ export default function ProfileForm({
     const weeklyDistance = parseNumber(weeklyDistanceKm);
     if (weeklyDistance === null || weeklyDistance <= 0) {
       next.weeklyDistanceKm = "Weekly distance must be a positive number.";
+    }
+
+    const itra = parseNumber(itraIndex);
+    if (itra !== null && (!Number.isInteger(itra) || itra < ITRA_INDEX_MIN || itra > ITRA_INDEX_MAX)) {
+      next.itraIndex = `ITRA index must be an integer between ${ITRA_INDEX_MIN} and ${ITRA_INDEX_MAX}.`;
     }
 
     setErrors(next);
@@ -124,6 +134,20 @@ export default function ProfileForm({
         }}
         placeholder="e.g. 35"
         error={errors.weeklyDistanceKm}
+        icon={<Activity className="size-4" />}
+      />
+
+      <FormField
+        id="itraIndex"
+        type="number"
+        label="ITRA index (optional)"
+        value={itraIndex}
+        onChange={(value) => {
+          setItraIndex(value);
+          clearError("itraIndex");
+        }}
+        placeholder="e.g. 620"
+        error={errors.itraIndex}
         icon={<Activity className="size-4" />}
       />
 

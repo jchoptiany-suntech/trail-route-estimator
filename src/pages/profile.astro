@@ -23,6 +23,7 @@ const success = Astro.url.searchParams.get("success");
         initialExperienceLevel={profile?.experienceLevel}
         initialWeightKg={profile?.weightKg}
         initialWeeklyDistanceKm={profile?.weeklyDistanceKm}
+        initialItraIndex={profile?.itraIndex}
         status={profile?.status ?? "draft"}
         serverError={error}
         serverSuccess={success}

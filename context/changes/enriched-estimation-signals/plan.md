@@ -259,30 +259,30 @@ Wywołanie pogodowe musi mieć krótki timeout i nie może wydłużać ścieżki
 
 #### Automated
 
-- [x] 1.1 Migracje SQL dla ITRA/planned_run_at/reset historii aplikują się bez błędów
-- [x] 1.2 Build przechodzi po rozszerzeniu typów i kontraktów
-- [x] 1.3 Lint przechodzi dla zmian schema/service
-- [x] 1.4 Kontrakty historii i dedupe przechodzą po zmianie signature
+- [x] 1.1 Migracje SQL dla ITRA/planned_run_at/reset historii aplikują się bez błędów — ceaa2a4
+- [x] 1.2 Build przechodzi po rozszerzeniu typów i kontraktów — ceaa2a4
+- [x] 1.3 Lint przechodzi dla zmian schema/service — ceaa2a4
+- [x] 1.4 Kontrakty historii i dedupe przechodzą po zmianie signature — ceaa2a4
 
 #### Manual
 
-- [x] 1.5 Nowe kolumny są dostępne i nullable w docelowych tabelach
-- [x] 1.6 Historia estymacji i zapisanych tras jest pusta po migracji, latest estimation pozostaje
+- [x] 1.5 Nowe kolumny są dostępne i nullable w docelowych tabelach — ceaa2a4
+- [x] 1.6 Historia estymacji i zapisanych tras jest pusta po migracji, latest estimation pozostaje — ceaa2a4
 
 ### Phase 2: Input Capture and Recompute Enrichment
 
 #### Automated
 
-- [ ] 2.1 Build przechodzi dla flow profile/upload/recompute po dodaniu nowych pól
-- [ ] 2.2 Lint przechodzi dla formularzy i API
-- [ ] 2.3 Testy warning-flow pozostają zielone po rozszerzeniu ścieżek
-- [ ] 2.4 Testy silnika przechodzą dla ITRA/weather z nowym input wiring
+- [x] 2.1 Build przechodzi dla flow profile/upload/recompute po dodaniu nowych pól
+- [x] 2.2 Lint przechodzi dla formularzy i API
+- [x] 2.3 Testy warning-flow pozostają zielone po rozszerzeniu ścieżek
+- [x] 2.4 Testy silnika przechodzą dla ITRA/weather z nowym input wiring
 
 #### Manual
 
-- [ ] 2.5 Profil obsługuje zapis z ITRA i bez ITRA zgodnie z regułami draft/complete
-- [ ] 2.6 Upload z datetime startu biegu wyzwala poprawną estymację
-- [ ] 2.7 Brak danych pogodowych nie blokuje estymacji i pokazuje warning
+- [x] 2.5 Profil obsługuje zapis z ITRA i bez ITRA zgodnie z regułami draft/complete
+- [x] 2.6 Upload z datetime startu biegu wyzwala poprawną estymację
+- [x] 2.7 Brak danych pogodowych nie blokuje estymacji i pokazuje warning
 
 ### Phase 3: Result Presentation and Regression Net
 
