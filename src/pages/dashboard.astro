@@ -42,6 +42,15 @@ const recomputeHistoryEntryId = protectedHistoryEntryId;
 ---
 
 <Layout title="Dashboard">
+  <form method="POST" action="/api/auth/signout" class="fixed top-4 right-4 z-50">
+    <button
+      type="submit"
+      class="inline-flex h-9 items-center justify-center rounded-lg border border-white/30 bg-black/30 px-4 text-sm font-medium text-white backdrop-blur transition-colors hover:bg-black/45"
+    >
+      Sign out
+    </button>
+  </form>
+
   <div class="bg-cosmic min-h-screen p-4">
     <div
       class="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl"
