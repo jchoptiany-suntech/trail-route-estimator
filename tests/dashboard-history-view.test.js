@@ -72,6 +72,11 @@ const estimationHistory = [
 ];
 
 const items = buildSavedEstimationHistoryItems(estimationHistory as any);
+const currentRouteHash = "rh-1";
+const recomputeHistoryEntryId =
+  currentRouteHash !== null
+    ? (items.find((item) => item.routeHash === currentRouteHash)?.id ?? null)
+    : null;
 console.log(\`itemCount=\${items.length}\`);
 console.log(\`firstHasRouteName=\${items[0]?.sourceFileName}\`);
 console.log(\`secondHasRouteFallback=\${items[1]?.sourceFileName === null}\`);
@@ -80,6 +85,7 @@ console.log(\`firstItraStatus=\${items[0]?.itraSignalStatus}\`);
 console.log(\`firstWeatherStatus=\${items[0]?.weatherSignalStatus}\`);
 console.log(\`firstVersion=\${items[0]?.historyVersion}\`);
 console.log(\`secondLegacy=\${items[1]?.isLegacy}\`);
+console.log(\`recomputeHistoryEntryId=\${recomputeHistoryEntryId}\`);
 console.log(\`warningPrefersQuery=\${resolveSavedHistoryWarning("from-query", new Error("x"))}\`);
 console.log(\`warningFromErrors=\${resolveSavedHistoryWarning(null, new Error("y"))}\`);
 console.log(\`warningNone=\${resolveSavedHistoryWarning(null, null) === null}\`);
@@ -105,6 +111,7 @@ void test("dashboard history view builds merged list entries", () => {
   assert.match(output, /firstWeatherStatus=provider_error/);
   assert.match(output, /firstVersion=2/);
   assert.match(output, /secondLegacy=true/);
+  assert.match(output, /recomputeHistoryEntryId=3/);
 });
 
 void test("dashboard history warning resolution keeps deterministic precedence", () => {

@@ -244,10 +244,10 @@ No schema or data migration is introduced in this phase. This plan only adds/mod
 
 #### Automated
 
-- [x] 1.1 New continuity integration test file executes under Node runner with deterministic outcomes: `node --test tests/critical-path-continuity.integration.test.js`
-- [x] 1.2 Existing feedback contract tests still pass with continuity wording intact: `node --test tests/api-recompute-feedback.test.js`
-- [x] 1.3 Existing history contract tests pass for identity/order baseline: `node --test tests/estimation-history-contracts.test.js`
-- [x] 1.4 Lint remains clean after test additions: `npm run lint -- tests/critical-path-continuity.integration.test.js tests/api-recompute-feedback.test.js tests/estimation-history-contracts.test.js`
+- [x] 1.1 New continuity integration test file executes under Node runner with deterministic outcomes: `node --test tests/critical-path-continuity.integration.test.js` — 6ee85c2
+- [x] 1.2 Existing feedback contract tests still pass with continuity wording intact: `node --test tests/api-recompute-feedback.test.js` — 6ee85c2
+- [x] 1.3 Existing history contract tests pass for identity/order baseline: `node --test tests/estimation-history-contracts.test.js` — 6ee85c2
+- [x] 1.4 Lint remains clean after test additions: `npm run lint -- tests/critical-path-continuity.integration.test.js tests/api-recompute-feedback.test.js tests/estimation-history-contracts.test.js` — 6ee85c2
 
 #### Manual
 
@@ -259,10 +259,10 @@ No schema or data migration is introduced in this phase. This plan only adds/mod
 
 #### Automated
 
-- [ ] 2.1 Upload continuity integration scenarios pass: `node --test tests/critical-path-continuity.integration.test.js`
-- [ ] 2.2 Explicit recompute continuity integration scenarios pass: `node --test tests/api-history-recompute-continuity.integration.test.js`
-- [ ] 2.3 Dashboard history continuity contracts remain stable: `node --test tests/dashboard-history-view.test.js`
-- [ ] 2.4 Build remains green after integration-test additions: `npm run build`
+- [x] 2.1 Upload continuity integration scenarios pass: `node --test tests/critical-path-continuity.integration.test.js`
+- [x] 2.2 Explicit recompute continuity integration scenarios pass: `node --test tests/api-history-recompute-continuity.integration.test.js`
+- [x] 2.3 Dashboard history continuity contracts remain stable: `node --test tests/dashboard-history-view.test.js`
+- [x] 2.4 Build remains green after integration-test additions: `npm run build`
 
 #### Manual
 

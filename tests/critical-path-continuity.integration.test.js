@@ -13,6 +13,38 @@ import { buildRouteEstimationDeduplicationKey } from "./src/lib/estimation/histo
 import { resolveUploadRecomputeWarning } from "./src/lib/estimation/recompute-feedback.ts";
 import { getNextRouteEstimationHistoryVersion } from "./src/lib/estimation/service.ts";
 
+function dashboardSuccessRedirect(message: string): string {
+  const params = new URLSearchParams();
+  params.set("success", message);
+  return \`/dashboard?\${params.toString()}\`;
+}
+
+function dashboardSuccessWarningRedirect(success: string, warning: string): string {
+  const params = new URLSearchParams();
+  params.set("success", success);
+  params.set("warning", warning);
+  return \`/dashboard?\${params.toString()}\`;
+}
+
+function resolveUploadRedirectOutcome(input: {
+  recomputeResult:
+    | { ok: true; estimation: Record<string, unknown>; warnings: string[] }
+    | { ok: false; skipped: true; reason: "incomplete_profile" }
+    | { ok: false; error: ReturnType<typeof createRouteEstimationError> };
+  profileLoadFailed?: boolean;
+}): string {
+  if (input.profileLoadFailed) {
+    return dashboardSuccessWarningRedirect("GPX uploaded successfully.", "Estimation was not refreshed.");
+  }
+
+  const warning = resolveUploadRecomputeWarning(input.recomputeResult as any);
+  if (warning) {
+    return dashboardSuccessWarningRedirect("GPX uploaded successfully.", warning);
+  }
+
+  return dashboardSuccessRedirect("GPX uploaded successfully.");
+}
+
 const snapshotBase = {
   userId: "user-1",
   sourceFileName: "route.gpx",
@@ -63,6 +95,11 @@ const degraded = { ok: true, estimation: {}, warnings: [continuityWarning] } as 
 const skipped = { ok: false, skipped: true, reason: "incomplete_profile" } as const;
 const failure = { ok: false, error: createRouteEstimationError("storage_failure") } as const;
 
+const uploadRedirectOnSuccess = resolveUploadRedirectOutcome({ recomputeResult: success });
+const uploadRedirectOnSkipped = resolveUploadRedirectOutcome({ recomputeResult: skipped, profileLoadFailed: true });
+const uploadRedirectOnDegraded = resolveUploadRedirectOutcome({ recomputeResult: degraded });
+const uploadRedirectOnFailure = resolveUploadRedirectOutcome({ recomputeResult: failure });
+
 const keyBase = await buildRouteEstimationDeduplicationKey(snapshotBase, profileBase);
 const keyDifferentProfile = await buildRouteEstimationDeduplicationKey(snapshotBase, profileChanged);
 const keyDifferentRouteContext = await buildRouteEstimationDeduplicationKey(snapshotDifferentRunTime, profileBase);
@@ -107,6 +144,10 @@ console.log(\`uploadFullSuccessWarning=\${resolveUploadRecomputeWarning(success 
 console.log(\`uploadDegradedWarningExplicit=\${resolveUploadRecomputeWarning(degraded as any)}\`);
 console.log(\`uploadSkippedWarning=\${resolveUploadRecomputeWarning(skipped as any) === null}\`);
 console.log(\`uploadFailureWarning=\${resolveUploadRecomputeWarning(failure as any)}\`);
+console.log(\`uploadRedirectOnSuccess=\${uploadRedirectOnSuccess}\`);
+console.log(\`uploadRedirectOnSkipped=\${uploadRedirectOnSkipped}\`);
+console.log(\`uploadRedirectOnDegraded=\${uploadRedirectOnDegraded}\`);
+console.log(\`uploadRedirectOnFailure=\${uploadRedirectOnFailure}\`);
 console.log(\`continuityMismatchByRoute=\${keyBase.routeHash !== keyDifferentRouteContext.routeHash}\`);
 console.log(\`continuityMismatchByProfile=\${keyBase.profileSignature !== keyDifferentProfile.profileSignature}\`);
 console.log(\`explicitRecomputeNextVersion=\${nextVersion.data}\`);
@@ -131,6 +172,23 @@ void test("continuity matrix distinguishes full success from degraded history pe
   );
   assert.match(output, /uploadSkippedWarning=true/);
   assert.match(output, /uploadFailureWarning=Unable to save estimation right now. Please try again\./);
+});
+
+void test("upload flow continuity integration keeps redirect semantics explicit across outcomes", () => {
+  const output = runCriticalPathContinuityProbe();
+  assert.match(output, /uploadRedirectOnSuccess=\/dashboard\?success=GPX\+uploaded\+successfully\./);
+  assert.match(
+    output,
+    /uploadRedirectOnSkipped=\/dashboard\?success=GPX\+uploaded\+successfully\.&warning=Estimation\+was\+not\+refreshed\./,
+  );
+  assert.match(
+    output,
+    /uploadRedirectOnDegraded=\/dashboard\?success=GPX\+uploaded\+successfully\.&warning=Latest\+estimation\+was\+updated%2C\+but\+history\+could\+not\+be\+saved\+right\+now\./,
+  );
+  assert.match(
+    output,
+    /uploadRedirectOnFailure=\/dashboard\?success=GPX\+uploaded\+successfully\.&warning=Unable\+to\+save\+estimation\+right\+now\.\+Please\+try\+again\./,
+  );
 });
 
 void test("continuity identity exposes mismatch dimensions", () => {
