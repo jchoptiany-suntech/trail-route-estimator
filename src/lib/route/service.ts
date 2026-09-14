@@ -184,3 +184,31 @@ export async function upsertRouteSnapshotForUser(
 
   return { data: mapRowToRouteSnapshot(data), error: null };
 }
+
+export async function updateRouteSnapshotPlannedRunForUser(
+  supabase: SupabaseClient,
+  userId: string,
+  input: { plannedRunAt: string | null; plannedRunTimezoneOffsetMinutes: number | null },
+): Promise<{ data: RouteSnapshot | null; error: Error | null }> {
+  const payload = {
+    planned_run_at: input.plannedRunAt,
+    planned_run_timezone_offset_minutes: input.plannedRunTimezoneOffsetMinutes,
+  };
+
+  const { data, error } = await supabase
+    .from("route_snapshots")
+    .update(payload)
+    .eq("user_id", userId)
+    .select(ROUTE_SNAPSHOT_SELECT)
+    .maybeSingle<RouteSnapshotRow>();
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  if (!data) {
+    return { data: null, error: null };
+  }
+
+  return { data: mapRowToRouteSnapshot(data), error: null };
+}

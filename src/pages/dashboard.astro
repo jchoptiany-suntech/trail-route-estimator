@@ -1,5 +1,6 @@
 ---
 import RouteEstimationCard from "@/components/routes/RouteEstimationCard";
+import RouteActionsPanel from "@/components/routes/RouteActionsPanel";
 import RouteMiniMap from "@/components/routes/RouteMiniMap";
 import RouteUploadForm from "@/components/routes/RouteUploadForm";
 import SavedEstimationHistory from "@/components/routes/SavedEstimationHistory.astro";
@@ -80,16 +81,16 @@ const recomputeHistoryEntryId = protectedHistoryEntryId;
         ) : null
       }
 
+      <RouteActionsPanel
+        recomputeHistoryEntryId={recomputeHistoryEntryId}
+        initialPlannedRunAt={snapshot?.plannedRunAt ?? null}
+        client:load
+      />
+
       <div class="grid gap-6 md:grid-cols-2">
         <div class="space-y-4 rounded-xl border border-white/10 bg-white/5 p-4">
           <h2 class="text-lg font-semibold text-white">Upload GPX</h2>
           <RouteUploadForm serverError={null} serverSuccess={null} hasSnapshot={Boolean(snapshot)} client:load />
-          <a
-            href="/profile"
-            class="inline-block text-sm text-purple-300 transition-colors hover:text-purple-100 hover:underline"
-          >
-            Edit profile
-          </a>
         </div>
 
         <div class="space-y-4 rounded-xl border border-white/10 bg-white/5 p-4">
@@ -127,11 +128,7 @@ const recomputeHistoryEntryId = protectedHistoryEntryId;
       <div class="mt-6">
         {
           estimation ? (
-            <RouteEstimationCard
-              estimation={estimation}
-              recomputeHistoryEntryId={recomputeHistoryEntryId}
-              client:load
-            />
+            <RouteEstimationCard estimation={estimation} client:load />
           ) : (
             <p class="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-blue-100/70">
               Personalized estimation is not available yet. Upload a route and keep your profile completed to generate

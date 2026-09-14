@@ -53,11 +53,17 @@ export default function RouteMiniMap({ geometry, bounds }: RouteMiniMapProps) {
       <svg viewBox={`0 0 ${width} ${height}`} className="h-auto w-full rounded-lg bg-slate-950/70">
         <polyline fill="none" stroke="#8B5CF6" strokeWidth="2.5" points={polylinePoints} />
         <circle cx={startPos.cx} cy={startPos.cy} r="4" fill="#22C55E" />
-        <circle cx={endPos.cx} cy={endPos.cy} r="4" fill="#F97316" />
+        <circle cx={endPos.cx} cy={endPos.cy} r="4" fill="#EF4444" />
       </svg>
       <div className="mt-2 flex items-center gap-4 text-xs text-blue-100/70">
-        <span>Start</span>
-        <span>End</span>
+        <span className="inline-flex items-center gap-1.5">
+          <span aria-hidden className="inline-block size-2 rounded-full bg-emerald-500" />
+          Start
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span aria-hidden className="inline-block size-2 rounded-full bg-red-500" />
+          End
+        </span>
       </div>
     </div>
   );

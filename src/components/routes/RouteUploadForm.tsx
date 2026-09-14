@@ -1,5 +1,4 @@
 import { Upload } from "lucide-react";
-import { useMemo, useState } from "react";
 import { ServerError } from "@/components/auth/ServerError";
 
 interface RouteUploadFormProps {
@@ -9,42 +8,16 @@ interface RouteUploadFormProps {
 }
 
 export default function RouteUploadForm({ serverError, serverSuccess, hasSnapshot = false }: RouteUploadFormProps) {
-  const [plannedRunAt, setPlannedRunAt] = useState("");
-  const plannedRunAtTimezoneOffsetMinutes = useMemo(() => {
-    if (!plannedRunAt) {
-      return "";
-    }
-
-    const localDate = new Date(plannedRunAt);
-    if (Number.isNaN(localDate.getTime())) {
-      return "";
-    }
-
-    return String(localDate.getTimezoneOffset());
-  }, [plannedRunAt]);
-
   return (
-    <form method="POST" action="/api/routes/upload" encType="multipart/form-data" className="space-y-4">
+    <form
+      id="route-upload-form"
+      method="POST"
+      action="/api/routes/upload"
+      encType="multipart/form-data"
+      className="space-y-4"
+    >
       <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-sm text-blue-100/75">
         Upload a GPX file to update your latest route context for analysis.
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="plannedRunAt" className="block text-sm font-medium text-white">
-          Planned run start (date & time)
-        </label>
-        <input
-          id="plannedRunAt"
-          name="plannedRunAt"
-          type="datetime-local"
-          value={plannedRunAt}
-          onChange={(event) => {
-            setPlannedRunAt(event.currentTarget.value);
-          }}
-          className="block w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white"
-        />
-        <input type="hidden" name="plannedRunAtTimezoneOffsetMinutes" value={plannedRunAtTimezoneOffsetMinutes} />
-        <p className="text-xs text-blue-100/70">Optional. Used for weather-aware estimation context.</p>
       </div>
 
       <div className="space-y-2">

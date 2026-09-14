@@ -4,7 +4,8 @@ import { recomputeLatestEstimation } from "@/lib/estimation/orchestration";
 import { resolveUploadRecomputeWarning } from "@/lib/estimation/recompute-feedback";
 import { getRouteEstimationHistoryEntryForUser } from "@/lib/estimation/service";
 import { getProfileForUser } from "@/lib/profile/service";
-import { getRouteSnapshotForUser } from "@/lib/route/service";
+import { parseOptionalPlannedRunAt } from "@/lib/route/planned-run";
+import { getRouteSnapshotForUser, updateRouteSnapshotPlannedRunForUser } from "@/lib/route/service";
 import { createClient } from "@/lib/supabase";
 
 function dashboardWarningRedirect(message: string): string {
@@ -53,6 +54,10 @@ export const POST: APIRoute = async (context) => {
   if (historyEntryId === null) {
     return context.redirect(dashboardErrorRedirect("Invalid history entry."));
   }
+  const plannedRunAt = parseOptionalPlannedRunAt(formData);
+  if (plannedRunAt.error) {
+    return context.redirect(dashboardErrorRedirect(plannedRunAt.error));
+  }
 
   const historyEntryResult = await getRouteEstimationHistoryEntryForUser(supabase, user.id, historyEntryId);
   if (historyEntryResult.error || !historyEntryResult.data) {
@@ -63,13 +68,27 @@ export const POST: APIRoute = async (context) => {
   if (snapshotResult.error || !snapshotResult.data) {
     return context.redirect(dashboardErrorRedirect("Upload the route again before recomputing this history entry."));
   }
-  const snapshot = snapshotResult.data;
+  let snapshot = snapshotResult.data;
 
   const currentRouteHash = await buildRouteHash(snapshot);
   if (currentRouteHash !== historyEntryResult.data.deduplicationKey.routeHash) {
     return context.redirect(
       dashboardErrorRedirect("Recompute is available only for the currently uploaded route context."),
     );
+  }
+
+  const hasPlannedRunChange =
+    snapshot.plannedRunAt !== plannedRunAt.value ||
+    snapshot.plannedRunTimezoneOffsetMinutes !== plannedRunAt.timezoneOffsetMinutes;
+  if (hasPlannedRunChange) {
+    const snapshotUpdateResult = await updateRouteSnapshotPlannedRunForUser(supabase, user.id, {
+      plannedRunAt: plannedRunAt.value,
+      plannedRunTimezoneOffsetMinutes: plannedRunAt.timezoneOffsetMinutes,
+    });
+    if (snapshotUpdateResult.error || !snapshotUpdateResult.data) {
+      return context.redirect(dashboardErrorRedirect("Unable to update planned run time right now."));
+    }
+    snapshot = snapshotUpdateResult.data;
   }
 
   const profileResult = await getProfileForUser(supabase, user.id);

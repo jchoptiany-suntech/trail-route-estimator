@@ -49,8 +49,12 @@ function formatPace(minutesPerKm: number | null): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")} min/km`;
 }
 
-function formatSignalStatus(status: string | null): string {
-  return status ? status.replaceAll("_", " ") : "n/a";
+function formatItraIndexInclusion(status: string | null): string {
+  return status === "available" ? "included" : "not included";
+}
+
+function formatWeatherForecastInclusion(status: string | null): string {
+  return status === "available" ? "included" : "not included";
 }
 ---
 
@@ -116,10 +120,11 @@ function formatSignalStatus(status: string | null): string {
                 <span class="text-blue-100/55">Avg pace:</span> {formatPace(item.averagePaceMinPerKm)}
               </p>
               <p>
-                <span class="text-blue-100/55">ITRA signal:</span> {formatSignalStatus(item.itraSignalStatus)}
+                <span class="text-blue-100/55">ITRA Index:</span> {formatItraIndexInclusion(item.itraSignalStatus)}
               </p>
               <p>
-                <span class="text-blue-100/55">Weather signal:</span> {formatSignalStatus(item.weatherSignalStatus)}
+                <span class="text-blue-100/55">Weather forecast:</span>{" "}
+                {formatWeatherForecastInclusion(item.weatherSignalStatus)}
               </p>
             </div>
             <p class="mt-2 text-right text-xs text-blue-100/60">{formatComputedAt(item.computedAt)}</p>

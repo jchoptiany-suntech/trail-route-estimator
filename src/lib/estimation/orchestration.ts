@@ -253,10 +253,7 @@ export async function recomputeLatestEstimation(input: RecomputeInput): Promise<
         return {
           ok: true,
           estimation: latestWrite.data,
-          warnings: [
-            ...externalSignalResolution.warnings,
-            createRouteEstimationError("history_storage_failure").message,
-          ],
+          warnings: externalSignalResolution.warnings,
         };
       }
 
