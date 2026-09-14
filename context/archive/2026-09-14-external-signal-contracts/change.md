@@ -1,9 +1,10 @@
 ---
 change_id: external-signal-contracts
 title: External signal contracts
-status: impl_reviewed
+status: archived
 created: 2026-09-14
 updated: 2026-09-14
+archived_at: 2026-09-14T10:00:59Z
 ---
 
 ## Notes

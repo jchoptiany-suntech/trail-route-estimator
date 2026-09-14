@@ -48,7 +48,7 @@ People planning mountain trail runs need a more reliable estimate of route diffi
 | S-02 | gpx-upload-and-map-context | upload GPX and view the uploaded route on a map | S-01 | FR-003, FR-007, US-01 | done |
 | S-03 | personalized-estimation-result | run route analysis and receive personalized time and difficulty estimation | S-01, S-02 | FR-005, FR-006, US-01 | done |
 | S-04 | saved-estimation-history | save generated estimations and view saved routes history | S-03 | FR-004, FR-008, US-01 | done |
-| F-01 | external-signal-contracts | (foundation) define external signal contracts and fallback policy for weather and runner indices | S-03 | FR-005, FR-006, NFR-accuracy, MS-01, MS-02 | in-progress |
+| F-01 | external-signal-contracts | (foundation) define external signal contracts and fallback policy for weather and runner indices | S-03 | FR-005, FR-006, NFR-accuracy, MS-01, MS-02 | done |
 | S-05 | enriched-estimation-signals | receive enriched estimation with runner-index and weather factors, plus average pace output | F-01, S-04 | FR-005, FR-006, US-01, MS-01, MS-02, MS-03 | proposed |
 | S-06 | enriched-estimation-history | revisit saved estimation history entries with enriched-signal context and pace consistency | S-05 | FR-004, FR-008, US-01, MS-03 | proposed |
 
@@ -79,7 +79,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
   - Weather provider selected: Open-Meteo (decision captured 2026-09-14). — Owner: user. Block: no.
   - ITRA mapping selected: global time multiplier with bounded impact (decision captured 2026-09-14). — Owner: user. Block: no.
 - **Risk:** Without a clear external-data contract, enriched estimation can drift in behavior and fail quality expectations despite working code.
-- **Status:** in-progress
+- **Status:** done
 
 ## Slices
 
@@ -189,3 +189,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-02: user can upload a GPX route and see the uploaded route on a map for route understanding.** — Archived 2026-09-13 → `context/archive/2026-09-13-gpx-upload-and-map-context/`. Lesson: —.
 - **S-03: user can run analysis and receive personalized route time estimation with an easy/medium/hard difficulty label.** — Archived 2026-09-13 → `context/archive/2026-09-13-personalized-estimation-result/`. Lesson: —.
 - **S-04: user can save generated estimations and revisit saved routes and estimation history.** — Archived 2026-09-13 → `context/archive/2026-09-13-saved-estimation-history/`. Lesson: —.
+- **F-01: (foundation) external weather and ITRA inputs have a defined contract, confidence/fallback behavior, and gating rules before user-facing enrichment is expanded, with weather kept optional.** — Archived 2026-09-14 → `context/archive/2026-09-14-external-signal-contracts/`. Lesson: —.
