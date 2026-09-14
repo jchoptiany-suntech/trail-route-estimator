@@ -22,6 +22,7 @@ function toRouteCanonicalSnapshot(snapshot: RouteSnapshot): string {
     `bounds.minLng=${normalizeNumber(snapshot.bounds.minLng)}`,
     `bounds.maxLat=${normalizeNumber(snapshot.bounds.maxLat)}`,
     `bounds.maxLng=${normalizeNumber(snapshot.bounds.maxLng)}`,
+    `plannedRunAt=${snapshot.plannedRunAt ?? "null"}`,
   ].join("|");
 }
 

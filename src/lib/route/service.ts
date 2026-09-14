@@ -19,6 +19,7 @@ function mapRowToRouteSnapshot(row: RouteSnapshotRow): RouteSnapshot {
     endLng: row.end_lng,
     bounds: row.bounds,
     geometry: row.geometry,
+    plannedRunAt: row.planned_run_at,
     uploadedAt: row.uploaded_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -43,6 +44,7 @@ function mapRowToSavedRouteHistory(row: SavedRouteHistoryRow): SavedRouteHistory
     endLat: row.end_lat,
     endLng: row.end_lng,
     bounds: row.bounds,
+    plannedRunAt: row.planned_run_at,
     uploadedAt: row.uploaded_at,
     lastEstimatedAt: row.last_estimated_at,
     createdAt: row.created_at,
@@ -51,9 +53,9 @@ function mapRowToSavedRouteHistory(row: SavedRouteHistoryRow): SavedRouteHistory
 }
 
 const ROUTE_SNAPSHOT_SELECT =
-  "user_id, source_file_name, source_file_size_bytes, point_count, total_distance_m, elevation_gain_m, elevation_loss_m, min_elevation_m, max_elevation_m, start_lat, start_lng, end_lat, end_lng, bounds, geometry, uploaded_at, created_at, updated_at";
+  "user_id, source_file_name, source_file_size_bytes, point_count, total_distance_m, elevation_gain_m, elevation_loss_m, min_elevation_m, max_elevation_m, start_lat, start_lng, end_lat, end_lng, bounds, geometry, planned_run_at, uploaded_at, created_at, updated_at";
 const SAVED_ROUTE_HISTORY_SELECT =
-  "id, user_id, route_hash, source_file_name, source_file_size_bytes, point_count, total_distance_m, elevation_gain_m, elevation_loss_m, min_elevation_m, max_elevation_m, start_lat, start_lng, end_lat, end_lng, bounds, uploaded_at, last_estimated_at, created_at, updated_at";
+  "id, user_id, route_hash, source_file_name, source_file_size_bytes, point_count, total_distance_m, elevation_gain_m, elevation_loss_m, min_elevation_m, max_elevation_m, start_lat, start_lng, end_lat, end_lng, bounds, planned_run_at, uploaded_at, last_estimated_at, created_at, updated_at";
 
 export async function getRouteSnapshotForUser(
   supabase: SupabaseClient,
@@ -123,6 +125,7 @@ export async function upsertSavedRouteHistoryForUser(
     end_lat: snapshot.endLat,
     end_lng: snapshot.endLng,
     bounds: snapshot.bounds,
+    planned_run_at: snapshot.plannedRunAt ?? null,
     uploaded_at: snapshot.uploadedAt,
     last_estimated_at: lastEstimatedAt,
   };
@@ -161,6 +164,7 @@ export async function upsertRouteSnapshotForUser(
     end_lng: input.endLng,
     bounds: input.bounds,
     geometry: input.geometry,
+    planned_run_at: input.plannedRunAt ?? null,
     uploaded_at: new Date().toISOString(),
   };
 

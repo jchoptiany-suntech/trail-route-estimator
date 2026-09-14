@@ -191,6 +191,7 @@ export async function persistRouteEstimationBundle(
     p_end_lat: routeSnapshot.endLat,
     p_end_lng: routeSnapshot.endLng,
     p_bounds: routeSnapshot.bounds,
+    p_planned_run_at: routeSnapshot.plannedRunAt ?? null,
   });
 
   return { error };

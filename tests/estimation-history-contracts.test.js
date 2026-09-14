@@ -31,6 +31,7 @@ const snapshot = {
   endLat: 49.25,
   endLng: 20.15,
   bounds: { minLat: 49.2, minLng: 20.1, maxLat: 49.25, maxLng: 20.15 },
+  plannedRunAt: "2026-09-20T05:30:00.000Z",
   geometry: [
     { lat: 49.2, lng: 20.1, eleM: 900 },
     { lat: 49.22, lng: 20.12, eleM: 1200 },
@@ -60,6 +61,13 @@ const keyRenamed = await buildRouteEstimationDeduplicationKey(
   },
   profileA,
 );
+const keyDifferentRunTime = await buildRouteEstimationDeduplicationKey(
+  {
+    ...snapshot,
+    plannedRunAt: "2026-09-20T07:30:00.000Z",
+  },
+  profileA,
+);
 
 const listOrder = [];
 const routeListOrder = [];
@@ -67,6 +75,7 @@ let estimationConflict = "";
 let routeConflict = "";
 let rpcName = "";
 let rpcDerivedMetrics = "";
+let rpcPlannedRunAt = "";
 
 const listSupabase = {
   from() {
@@ -200,6 +209,7 @@ const routeUpsertSupabase = {
                     end_lat: 49.25,
                     end_lng: 20.15,
                     bounds: { minLat: 49.2, minLng: 20.1, maxLat: 49.25, maxLng: 20.15 },
+                    planned_run_at: "2026-09-20T05:30:00.000Z",
                     uploaded_at: "2026-09-13T22:00:00.000Z",
                     last_estimated_at: "2026-09-13T22:01:00.000Z",
                     created_at: "2026-09-13T22:01:00.000Z",
@@ -220,6 +230,7 @@ const rpcSupabase = {
   rpc(name, args) {
     rpcName = name;
     rpcDerivedMetrics = JSON.stringify(args?.p_derived_metrics ?? {});
+    rpcPlannedRunAt = String(args?.p_planned_run_at ?? "");
     return Promise.resolve({ error: null });
   },
 };
@@ -316,12 +327,14 @@ await persistRouteEstimationBundle(
 console.log(\`sameInputSameKey=\${keyA1.routeHash === keyA2.routeHash && keyA1.profileSignature === keyA2.profileSignature}\`);
 console.log(\`differentProfileDifferentSignature=\${keyA1.profileSignature !== keyB.profileSignature}\`);
 console.log(\`differentFileMetadataSameRouteHash=\${keyA1.routeHash === keyRenamed.routeHash}\`);
+console.log(\`differentRunTimeDifferentRouteHash=\${keyA1.routeHash !== keyDifferentRunTime.routeHash}\`);
 console.log(\`estimationListOrder=\${listOrder.join(",")}\`);
 console.log(\`savedRouteListOrder=\${routeListOrder.join(",")}\`);
 console.log(\`estimationUpsertConflict=\${estimationConflict}\`);
 console.log(\`savedRouteUpsertConflict=\${routeConflict}\`);
 console.log(\`bundleRpcName=\${rpcName}\`);
 console.log(\`bundleRpcCarriesSignals=\${rpcDerivedMetrics.includes("\\"externalSignals\\"") && rpcDerivedMetrics.includes("\\"globalTimeMultiplierApplied\\"")}\`);
+console.log(\`bundleRpcCarriesPlannedRunAt=\${rpcPlannedRunAt === "2026-09-20T05:30:00.000Z"}\`);
 `;
 
   writeFileSync(scriptPath, script, "utf8");
@@ -349,6 +362,11 @@ void test("route hash ignores filename and file size metadata", () => {
   assert.match(output, /differentFileMetadataSameRouteHash=true/);
 });
 
+void test("route hash changes when planned run datetime changes", () => {
+  const output = runHistoryContractsProbe();
+  assert.match(output, /differentRunTimeDifferentRouteHash=true/);
+});
+
 void test("history list ordering contracts are stable", () => {
   const output = runHistoryContractsProbe();
   assert.match(output, /estimationListOrder=computed_at:desc,id:desc/);
@@ -369,4 +387,5 @@ void test("bundle persistence uses transactional rpc contract", () => {
 void test("bundle persistence keeps external signal snapshot in derived metrics payload", () => {
   const output = runHistoryContractsProbe();
   assert.match(output, /bundleRpcCarriesSignals=true/);
+  assert.match(output, /bundleRpcCarriesPlannedRunAt=true/);
 });

@@ -136,6 +136,7 @@ export interface SavedRouteHistoryEntry {
   endLat: number;
   endLng: number;
   bounds: RouteSnapshot["bounds"];
+  plannedRunAt: string | null;
   uploadedAt: string;
   lastEstimatedAt: string;
   createdAt: string;
@@ -159,6 +160,7 @@ export interface SavedRouteHistoryRow {
   end_lat: number;
   end_lng: number;
   bounds: RouteSnapshot["bounds"];
+  planned_run_at: string | null;
   uploaded_at: string;
   last_estimated_at: string;
   created_at: string;

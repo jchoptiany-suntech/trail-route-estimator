@@ -6,6 +6,7 @@ export interface ProfileDraftInput {
   experienceLevel: string | null;
   weightKg: number | null;
   weeklyDistanceKm: number | null;
+  itraIndex: number | null;
 }
 
 export interface SportProfile extends ProfileDraftInput {
@@ -21,6 +22,7 @@ interface ProfileRow {
   experience_level: string | null;
   weight_kg: number | null;
   weekly_distance_km: number | null;
+  itra_index: number | null;
   status: ProfileStatus;
   completed_at: string | null;
   created_at: string;
@@ -46,6 +48,7 @@ function mapRowToProfile(row: ProfileRow): SportProfile {
     experienceLevel: row.experience_level,
     weightKg: row.weight_kg,
     weeklyDistanceKm: row.weekly_distance_km,
+    itraIndex: row.itra_index,
     status: row.status,
     completedAt: row.completed_at,
     createdAt: row.created_at,
@@ -59,7 +62,9 @@ export async function getProfileForUser(
 ): Promise<{ data: SportProfile | null; error: Error | null }> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("user_id, experience_level, weight_kg, weekly_distance_km, status, completed_at, created_at, updated_at")
+    .select(
+      "user_id, experience_level, weight_kg, weekly_distance_km, itra_index, status, completed_at, created_at, updated_at",
+    )
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -88,6 +93,7 @@ export async function upsertProfileForUser(
     experience_level: input.experienceLevel,
     weight_kg: input.weightKg,
     weekly_distance_km: input.weeklyDistanceKm,
+    itra_index: input.itraIndex,
     status,
     completed_at: status === "complete" ? new Date().toISOString() : null,
   };
@@ -95,7 +101,9 @@ export async function upsertProfileForUser(
   const { data, error } = await supabase
     .from("profiles")
     .upsert(payload, { onConflict: "user_id" })
-    .select("user_id, experience_level, weight_kg, weekly_distance_km, status, completed_at, created_at, updated_at")
+    .select(
+      "user_id, experience_level, weight_kg, weekly_distance_km, itra_index, status, completed_at, created_at, updated_at",
+    )
     .single();
 
   if (error) {

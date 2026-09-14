@@ -28,6 +28,20 @@ function parseOptionalNumber(formData: FormData, field: string): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+function parseOptionalInteger(formData: FormData, field: string): number | null {
+  const value = formData.get(field);
+  if (typeof value !== "string" || value.trim() === "") {
+    return null;
+  }
+
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed)) {
+    return null;
+  }
+
+  return parsed;
+}
+
 function parseDraftInput(formData: FormData): ProfileDraftInput {
   const experienceValue = formData.get("experienceLevel");
 
@@ -36,6 +50,7 @@ function parseDraftInput(formData: FormData): ProfileDraftInput {
       typeof experienceValue === "string" && experienceValue.trim() !== "" ? experienceValue.trim() : null,
     weightKg: parseOptionalNumber(formData, "weightKg"),
     weeklyDistanceKm: parseOptionalNumber(formData, "weeklyDistanceKm"),
+    itraIndex: parseOptionalInteger(formData, "itraIndex"),
   };
 }
 

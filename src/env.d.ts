@@ -3,6 +3,7 @@ declare namespace App {
     experienceLevel: string | null;
     weightKg: number | null;
     weeklyDistanceKm: number | null;
+    itraIndex: number | null;
     status: "draft" | "complete";
   }
 

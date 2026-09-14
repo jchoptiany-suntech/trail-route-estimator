@@ -54,6 +54,7 @@ export interface RouteSnapshotInput {
   bounds: RouteBounds;
   geometry: GpxPoint[];
   metrics: RouteSnapshotMetrics;
+  plannedRunAt?: string | null;
 }
 
 export interface RouteSnapshotRow {
@@ -72,6 +73,7 @@ export interface RouteSnapshotRow {
   end_lng: number;
   bounds: RouteBounds;
   geometry: GpxPoint[];
+  planned_run_at: string | null;
   uploaded_at: string;
   created_at: string;
   updated_at: string;
@@ -93,6 +95,7 @@ export interface RouteSnapshot {
   endLng: number;
   bounds: RouteBounds;
   geometry: GpxPoint[];
+  plannedRunAt?: string | null;
   uploadedAt: string;
   createdAt: string;
   updatedAt: string;
