@@ -10,6 +10,7 @@ function runHistoryContractsProbe() {
   const script = `
 import { buildRouteEstimationDeduplicationKey } from "./src/lib/estimation/history-signature.ts";
 import {
+  getNextRouteEstimationHistoryVersion,
   listRouteEstimationHistoryForUser,
   persistRouteEstimationBundle,
   upsertRouteEstimationHistoryEntryForUser,
@@ -50,10 +51,15 @@ const profileA = {
   updatedAt: "2026-09-13T22:00:00.000Z",
 };
 const profileB = { ...profileA, weeklyDistanceKm: 42 };
+const profileANormalized = {
+  ...profileA,
+  experienceLevel: "  INTERMEDIATE  ",
+};
 
 const keyA1 = await buildRouteEstimationDeduplicationKey(snapshot, profileA);
 const keyA2 = await buildRouteEstimationDeduplicationKey(snapshot, profileA);
 const keyB = await buildRouteEstimationDeduplicationKey(snapshot, profileB);
+const keyANormalized = await buildRouteEstimationDeduplicationKey(snapshot, profileANormalized);
 const keyRenamed = await buildRouteEstimationDeduplicationKey(
   {
     ...snapshot,
@@ -78,6 +84,7 @@ let rpcName = "";
 let rpcDerivedMetrics = "";
 let rpcPlannedRunAt = "";
 let rpcPlannedRunOffset = "";
+let nextVersionData = "";
 
 const listSupabase = {
   from() {
@@ -238,6 +245,40 @@ const rpcSupabase = {
   },
 };
 
+const versionSupabase = {
+  from() {
+    return {
+      select() {
+        return {
+          eq() {
+            return {
+              eq() {
+                return {
+                  eq() {
+                    return {
+                      order() {
+                        return {
+                          limit() {
+                            return {
+                              maybeSingle() {
+                                return Promise.resolve({ data: { history_version: 5 }, error: null });
+                              },
+                            };
+                          },
+                        };
+                      },
+                    };
+                  },
+                };
+              },
+            };
+          },
+        };
+      },
+    };
+  },
+};
+
 await listRouteEstimationHistoryForUser(listSupabase as any, "user-1", 20);
 await listSavedRouteHistoryForUser(routeListSupabase as any, "user-1", 20);
 await upsertRouteEstimationHistoryEntryForUser(
@@ -326,9 +367,12 @@ await persistRouteEstimationBundle(
   },
   snapshot,
 );
+const nextVersion = await getNextRouteEstimationHistoryVersion(versionSupabase as any, "user-1", keyA1);
+nextVersionData = String(nextVersion.data);
 
 console.log(\`sameInputSameKey=\${keyA1.routeHash === keyA2.routeHash && keyA1.profileSignature === keyA2.profileSignature}\`);
 console.log(\`differentProfileDifferentSignature=\${keyA1.profileSignature !== keyB.profileSignature}\`);
+console.log(\`normalizedProfileSameSignature=\${keyA1.profileSignature === keyANormalized.profileSignature}\`);
 console.log(\`differentFileMetadataSameRouteHash=\${keyA1.routeHash === keyRenamed.routeHash}\`);
 console.log(\`differentRunTimeDifferentRouteHash=\${keyA1.routeHash !== keyDifferentRunTime.routeHash}\`);
 console.log(\`estimationListOrder=\${listOrder.join(",")}\`);
@@ -339,6 +383,7 @@ console.log(\`bundleRpcName=\${rpcName}\`);
 console.log(\`bundleRpcCarriesSignals=\${rpcDerivedMetrics.includes("\\"externalSignals\\"") && rpcDerivedMetrics.includes("\\"globalTimeMultiplierApplied\\"")}\`);
 console.log(\`bundleRpcCarriesPlannedRunAt=\${rpcPlannedRunAt === "2026-09-20T05:30:00.000Z"}\`);
 console.log(\`bundleRpcCarriesPlannedRunOffset=\${rpcPlannedRunOffset === "-120"}\`);
+console.log(\`nextHistoryVersion=\${nextVersionData}\`);
 `;
 
   writeFileSync(scriptPath, script, "utf8");
@@ -359,6 +404,11 @@ void test("dedupe keys are stable for same inputs", () => {
 void test("profile signature changes when profile input changes", () => {
   const output = runHistoryContractsProbe();
   assert.match(output, /differentProfileDifferentSignature=true/);
+});
+
+void test("profile signature normalization keeps continuity identity stable", () => {
+  const output = runHistoryContractsProbe();
+  assert.match(output, /normalizedProfileSameSignature=true/);
 });
 
 void test("route hash ignores filename and file size metadata", () => {
@@ -393,4 +443,9 @@ void test("bundle persistence keeps external signal snapshot in derived metrics 
   assert.match(output, /bundleRpcCarriesSignals=true/);
   assert.match(output, /bundleRpcCarriesPlannedRunAt=true/);
   assert.match(output, /bundleRpcCarriesPlannedRunOffset=true/);
+});
+
+void test("history version lookup increments from latest version", () => {
+  const output = runHistoryContractsProbe();
+  assert.match(output, /nextHistoryVersion=6/);
 });

@@ -17,6 +17,11 @@ import { resolveProfileRecomputeWarning, resolveUploadRecomputeWarning } from ".
     estimation: {},
     warnings: ["ITRA index is unavailable, so a neutral runner factor was applied."],
 } as const;
+  const successWithHistoryWarning = {
+    ok: true,
+    estimation: {},
+    warnings: [createRouteEstimationError("history_storage_failure").message],
+  } as const;
   const skipped = { ok: false, skipped: true, reason: "incomplete_profile" } as const;
   const fullFailure = {
     ok: false,
@@ -34,11 +39,13 @@ console.log(\`uploadSuccessWarn=\${resolveUploadRecomputeWarning(successWithWarn
 console.log(\`uploadSkipped=\${resolveUploadRecomputeWarning(skipped as any) === null}\`);
 console.log(\`uploadFailure=\${resolveUploadRecomputeWarning(fullFailure as any)}\`);
 console.log(\`uploadPartial=\${resolveUploadRecomputeWarning(partialFailure as any)}\`);
+console.log(\`uploadHistoryDegradedSuccess=\${resolveUploadRecomputeWarning(successWithHistoryWarning as any)}\`);
 console.log(\`profileSuccess=\${resolveProfileRecomputeWarning(success as any) === null}\`);
 console.log(\`profileSuccessWarn=\${resolveProfileRecomputeWarning(successWithWarnings as any)}\`);
 console.log(\`profileSkipped=\${resolveProfileRecomputeWarning(skipped as any) === null}\`);
 console.log(\`profileFailure=\${resolveProfileRecomputeWarning(fullFailure as any)}\`);
 console.log(\`profilePartial=\${resolveProfileRecomputeWarning(partialFailure as any)}\`);
+console.log(\`profileHistoryDegradedSuccess=\${resolveProfileRecomputeWarning(successWithHistoryWarning as any)}\`);
 `;
 
   writeFileSync(scriptPath, script, "utf8");
@@ -66,6 +73,10 @@ void test("upload flow surfaces warnings for full and history-only failures", ()
   const output = runApiRecomputeFeedbackProbe();
   assert.match(output, /uploadFailure=Unable to save estimation right now. Please try again\./);
   assert.match(output, /uploadPartial=Latest estimation was updated, but history could not be saved right now\./);
+  assert.match(
+    output,
+    /uploadHistoryDegradedSuccess=Latest estimation was updated, but history could not be saved right now\./,
+  );
 });
 
 void test("profile flow keeps success and skipped recompute warning-free", () => {
@@ -88,5 +99,9 @@ void test("profile flow surfaces warnings for full and history-only failures", (
   assert.match(
     output,
     /profilePartial=Profile saved, but latest estimation was updated, but history could not be saved right now\./,
+  );
+  assert.match(
+    output,
+    /profileHistoryDegradedSuccess=Profile saved, but Latest estimation was updated, but history could not be saved right now\./,
   );
 });
