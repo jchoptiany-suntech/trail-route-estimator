@@ -18,7 +18,7 @@ export function resolveProfileRecomputeWarning(result: RecomputeResult): string 
   }
 
   if (result.ok && result.warnings.length > 0) {
-    return `Profile saved, but ${result.warnings.join(" ").toLowerCase()}`;
+    return `Profile saved, but ${result.warnings.join(" ")}`;
   }
 
   return null;

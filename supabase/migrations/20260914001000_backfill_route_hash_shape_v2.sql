@@ -18,7 +18,7 @@ language sql
 immutable
 as $$
   select encode(
-    digest(
+    extensions.digest(
       concat_ws(
         '|',
         'route-shape-v2',

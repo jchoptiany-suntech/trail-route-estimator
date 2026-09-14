@@ -25,6 +25,7 @@ interface RecomputeInput {
   userId: string;
   snapshot: RouteSnapshot | null;
   profile: SportProfile | null;
+  weatherProviderError?: Error | null;
 }
 
 export interface RecomputeSuccess {
@@ -52,8 +53,16 @@ interface ExternalSignalResolutionResult {
   warnings: string[];
 }
 
-function resolveExternalSignals(): ExternalSignalResolutionResult {
+function isHistoryOnlyBundleFailure(error: Error): boolean {
+  const haystack = `${error.name} ${error.message}`.toLowerCase();
+  return haystack.includes("route_estimation_history") || haystack.includes("saved_route_history");
+}
+
+function resolveExternalSignals(weatherProviderError?: Error | null): ExternalSignalResolutionResult {
   const warning = "ITRA index is unavailable, so a neutral runner factor was applied.";
+  const weatherWarning = weatherProviderError
+    ? "Weather provider is unavailable, so a neutral weather factor was applied."
+    : "Weather impact was skipped because no run datetime was provided.";
 
   return {
     externalSignals: {
@@ -66,15 +75,15 @@ function resolveExternalSignals(): ExternalSignalResolutionResult {
         asOf: null,
       },
       weather: {
-        status: "not_applicable",
+        status: weatherProviderError ? "provider_error" : "not_applicable",
         source: "open-meteo",
         meanTemperatureC: null,
         globalTimeMultiplier: WEATHER_GLOBAL_MULTIPLIER_NEUTRAL,
-        message: "Weather impact was skipped because no run datetime was provided.",
+        message: weatherWarning,
         asOf: null,
       },
     },
-    warnings: [warning],
+    warnings: weatherProviderError ? [warning, weatherWarning] : [warning],
   };
 }
 
@@ -95,7 +104,7 @@ export async function recomputeLatestEstimation(input: RecomputeInput): Promise<
   }
 
   try {
-    const externalSignalResolution = resolveExternalSignals();
+    const externalSignalResolution = resolveExternalSignals(input.weatherProviderError);
 
     const computed = computeRouteEstimation({
       userId: input.userId,
@@ -128,7 +137,7 @@ export async function recomputeLatestEstimation(input: RecomputeInput): Promise<
       input.snapshot,
     );
 
-    if (persistedBundle.error) {
+    if (persistedBundle.error && isHistoryOnlyBundleFailure(persistedBundle.error)) {
       const fallbackLatest = await upsertRouteEstimationForUser(input.supabase, input.userId, computed, {
         sourceUploadedAt: input.snapshot.uploadedAt,
         profileUpdatedAt: input.profile.updatedAt,
@@ -148,6 +157,16 @@ export async function recomputeLatestEstimation(input: RecomputeInput): Promise<
         ok: true,
         estimation: fallbackLatest.data,
         warnings: [...externalSignalResolution.warnings, createRouteEstimationError("history_storage_failure").message],
+      };
+    }
+
+    if (persistedBundle.error) {
+      return {
+        ok: false,
+        error: {
+          code: "storage_failure",
+          message: "Unable to save estimation right now. Please try again.",
+        },
       };
     }
 

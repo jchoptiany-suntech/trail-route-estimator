@@ -78,7 +78,7 @@ void test("profile flow surfaces warning on successful recompute with optional-s
   const output = runApiRecomputeFeedbackProbe();
   assert.match(
     output,
-    /profileSuccessWarn=Profile saved, but itra index is unavailable, so a neutral runner factor was applied\./,
+    /profileSuccessWarn=Profile saved, but ITRA index is unavailable, so a neutral runner factor was applied\./,
   );
 });
 

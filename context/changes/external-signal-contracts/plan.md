@@ -127,6 +127,8 @@ Wpinamy resolve sygnałów do orkiestracji, aplikujemy bounded wpływ w silniku 
 
 **Contract**: Brak nowych obowiązkowych kolumn dla weather/ITRA; zgodność z obecnym `jsonb` payload i istniejącymi upsert keys.
 
+**Implementation note**: W tej iteracji kompatybilność kontraktu service/RPC została domknięta przez testy kontraktowe (`tests/estimation-history-contracts.test.js`) bez konieczności modyfikacji plików `service.ts`/RPC migration.
+
 #### 5. Recompute warning surfacing for optional external failures
 
 **File**: `src/lib/estimation/recompute-feedback.ts`
