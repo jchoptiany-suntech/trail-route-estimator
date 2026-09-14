@@ -1,8 +1,15 @@
 import type { RouteSnapshot } from "@/lib/route/types";
 
 export const ESTIMATION_DIFFICULTY_LABELS = ["easy", "medium", "hard"] as const;
+export const EXTERNAL_SIGNAL_STATUSES = ["available", "missing", "not_applicable", "provider_error"] as const;
+
+export const ITRA_GLOBAL_MULTIPLIER_MIN = 0.95;
+export const ITRA_GLOBAL_MULTIPLIER_MAX = 1.05;
+export const ITRA_GLOBAL_MULTIPLIER_NEUTRAL = 1;
+export const WEATHER_GLOBAL_MULTIPLIER_NEUTRAL = 1;
 
 export type DifficultyLabel = (typeof ESTIMATION_DIFFICULTY_LABELS)[number];
+export type ExternalSignalStatus = (typeof EXTERNAL_SIGNAL_STATUSES)[number];
 
 export interface EstimationProfileInput {
   experienceLevel: string;
@@ -11,17 +18,43 @@ export interface EstimationProfileInput {
   updatedAt: string;
 }
 
+export interface ItraSignalResolution {
+  status: ExternalSignalStatus;
+  source: "itra";
+  rawScore: number | null;
+  globalTimeMultiplier: number;
+  message: string | null;
+  asOf: string | null;
+}
+
+export interface WeatherSignalResolution {
+  status: ExternalSignalStatus;
+  source: "open-meteo";
+  meanTemperatureC: number | null;
+  globalTimeMultiplier: number;
+  message: string | null;
+  asOf: string | null;
+}
+
+export interface ExternalSignalResolution {
+  itra: ItraSignalResolution;
+  weather: WeatherSignalResolution;
+}
+
 export interface EstimationDerivedMetrics {
   averageSlopePercent: number | null;
   elevationPerKmM: number | null;
   profileAdjustmentFactor: number;
   effortScore: number;
+  externalSignals?: ExternalSignalResolution;
+  globalTimeMultiplierApplied?: number;
 }
 
 export interface RouteEstimationInput {
   userId: string;
   routeSnapshot: RouteSnapshot;
   profile: EstimationProfileInput;
+  externalSignals?: ExternalSignalResolution;
 }
 
 export interface RouteEstimationComputation {

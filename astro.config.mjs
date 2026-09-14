@@ -18,6 +18,8 @@ export default defineConfig({
     schema: {
       SUPABASE_URL: envField.string({ context: "server", access: "secret", optional: true }),
       SUPABASE_KEY: envField.string({ context: "server", access: "secret", optional: true }),
+      OPEN_METEO_BASE_URL: envField.string({ context: "server", access: "secret", optional: true }),
+      OPEN_METEO_TIMEOUT_MS: envField.number({ context: "server", access: "secret", optional: true }),
     },
   },
 });
