@@ -263,12 +263,12 @@ This change is additive and backward-compatible for reads: legacy rows remain qu
 
 #### Automated
 
-- [x] 3.1 Dashboard history view tests pass with legacy/versioned scenarios: `node --test tests/dashboard-history-view.test.js`.
-- [x] 3.2 History contracts and recompute feedback tests pass end-to-end: `node --test tests/estimation-history-contracts.test.js tests/api-recompute-feedback.test.js`.
-- [x] 3.3 Repository lint and build pass after UI/SSR changes: `npm run lint && npm run build`.
+- [x] 3.1 Dashboard history view tests pass with legacy/versioned scenarios: `node --test tests/dashboard-history-view.test.js`. — 95db4a0
+- [x] 3.2 History contracts and recompute feedback tests pass end-to-end: `node --test tests/estimation-history-contracts.test.js tests/api-recompute-feedback.test.js`. — 95db4a0
+- [x] 3.3 Repository lint and build pass after UI/SSR changes: `npm run lint && npm run build`. — 95db4a0
 
 #### Manual
 
-- [ ] 3.4 Dashboard history shows coherent route context for each row without post-upload drift.
-- [ ] 3.5 Legacy rows are clearly distinguishable from S-06 versioned rows.
-- [ ] 3.6 Per-entry recompute is understandable and does not regress existing upload/profile flows.
+- [x] 3.4 Dashboard history shows coherent route context for each row without post-upload drift. — 95db4a0
+- [x] 3.5 Legacy rows are clearly distinguishable from S-06 versioned rows. — 95db4a0
+- [x] 3.6 Per-entry recompute is understandable and does not regress existing upload/profile flows. — 95db4a0

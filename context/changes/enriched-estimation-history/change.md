@@ -1,7 +1,7 @@
 ---
 change_id: enriched-estimation-history
 title: Enriched estimation history continuity
-status: implementing
+status: implemented
 created: 2026-09-14
 updated: 2026-09-14
 ---
