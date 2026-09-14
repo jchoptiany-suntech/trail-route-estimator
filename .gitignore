@@ -32,3 +32,13 @@ pnpm-debug.log*
 
 # local sensitive scratch file
 context/foundation/psw
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+/.playwright-cli/
+playwright_auth.json
+auth.jsoncls

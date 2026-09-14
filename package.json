@@ -1,5 +1,5 @@
 {
-  "name": "10x-astro-starter",
+  "name": "trail-route-estimator",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -19,7 +19,7 @@
     "@eslint/config-helpers": "^0.6.0",
     "@radix-ui/react-slot": "^1.1.2",
     "@supabase/ssr": "^0.10.3",
-    "@supabase/supabase-js": "^2.99.1",
+    "@supabase/supabase-js": "^2.115.0",
     "@tailwindcss/vite": "^4.2.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -36,6 +36,8 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.3",
     "@eslint/js": "^9.29.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.5.1",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-astro": "^1.7.0",
@@ -52,7 +54,7 @@
     "supabase": "^2.23.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.59.2",
-    "wrangler": "^4.90.0"
+    "wrangler": "^4.128.0"
   },
   "overrides": {
     "vite": "^7.3.2"

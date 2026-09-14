@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "10x-astro-starter",
+  "name": "trail-route-estimator",
   "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-05-08",
   "compatibility_flags": ["nodejs_compat"],
@@ -9,6 +9,13 @@
     "directory": "./dist",
     "not_found_handling": "404-page",
   },
+  "kv_namespaces": [
+    {
+      "binding": "SESSION",
+      "id": "11f17b8c2b0640028e9f15de01f164b9",
+      "preview_id": "11f17b8c2b0640028e9f15de01f164b9",
+    },
+  ],
   "observability": {
     "enabled": true,
   },
