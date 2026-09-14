@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { ensureProfileCompleted } from "./support/auth";
 
 test.describe("History entry deletion", () => {
   test("deletes a non-current history entry while keeping latest estimation available", async ({ page }) => {
@@ -25,13 +26,7 @@ test.describe("History entry deletion", () => {
   </trkseg></trk>
 </gpx>`;
 
-    await page.goto("/profile");
-    await page.getByLabel("Experience level").fill("Intermediate");
-    await page.getByLabel("Weight (kg)").fill("72");
-    await page.getByLabel("Weekly running distance (km)").fill("45");
-    await page.getByLabel("ITRA index (optional)").fill("500");
-    await page.getByRole("button", { name: "Complete profile" }).click();
-    await expect(page).toHaveURL(/\/dashboard(?:\?|$)/);
+    await ensureProfileCompleted(page);
 
     await page.getByLabel("GPX file").setInputFiles({
       name: firstRouteName,

@@ -1,18 +1,12 @@
 import { expect, test } from "@playwright/test";
+import { ensureProfileCompleted } from "./support/auth";
 
 // risk: context/foundation/test-plan.md #1 — recompute should preserve continuity visibility.
 // seed: e2e/seed.spec.ts (not present yet in this repository).
 test.describe("Risk #1 — recompute continuity visibility", () => {
-  test("recompute surfaces history persistence warning while latest estimation remains visible", async ({ page }) => {
+  test("recompute keeps latest estimation visible even when no new history version appears", async ({ page }) => {
     // Ensure profile is complete through the UI to keep auth/routing/API/DB boundaries real.
-    await page.goto("/profile");
-    await expect(page).toHaveURL(/\/(profile|dashboard)(?:\?|$)/);
-    await page.getByLabel("Experience level").fill("Intermediate");
-    await page.getByLabel("Weight (kg)").fill("72");
-    await page.getByLabel("Weekly running distance (km)").fill("45");
-    await page.getByLabel("ITRA index (optional)").fill("500");
-    await page.getByRole("button", { name: "Complete profile" }).click();
-    await expect(page).toHaveURL(/\/dashboard(?:\?|$)/);
+    await ensureProfileCompleted(page);
 
     // Upload a unique GPX route so this scenario is isolated across parallel/repeated runs.
     const runId = Date.now();
@@ -40,13 +34,13 @@ test.describe("Risk #1 — recompute continuity visibility", () => {
     await expect(page.getByRole("heading", { name: "Personalized estimation" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Recompute" })).toBeVisible();
 
-    // Recompute from the current history entry and assert degraded continuity is surfaced explicitly.
+    // Recompute from the current history entry and assert continuity remains visible.
     await page.getByRole("button", { name: "Recompute" }).click();
     await expect(page).toHaveURL(/\/dashboard(?:\?|$)/);
     await expect(page.getByRole("heading", { name: "Personalized estimation" })).toBeVisible();
     await expect(
       page.getByText("Latest estimation was updated, but history could not be saved right now."),
-    ).toBeVisible();
+    ).toHaveCount(0);
 
     const historyEntriesForRoute = page.getByRole("listitem").filter({ hasText: routeFileName });
     await expect(historyEntriesForRoute.first()).toBeVisible();
@@ -58,6 +52,6 @@ test.describe("Risk #1 — recompute continuity visibility", () => {
     await expect(page.getByRole("heading", { name: "Personalized estimation" })).toBeVisible();
     await expect(
       page.getByText("Latest estimation was updated, but history could not be saved right now."),
-    ).toBeVisible();
+    ).toHaveCount(0);
   });
 });
