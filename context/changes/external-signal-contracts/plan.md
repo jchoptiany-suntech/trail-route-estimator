@@ -243,25 +243,25 @@ Preferowany brak nowej migracji schematu: sygnały external pozostają w `derive
 
 #### Automated
 
-- [x] 1.1 Type-level contract rozszerza RouteEstimationInput/EstimationDerivedMetrics bez błędów budowania
-- [x] 1.2 Lint przechodzi po zmianach kontraktowych
+- [x] 1.1 Type-level contract rozszerza RouteEstimationInput/EstimationDerivedMetrics bez błędów budowania — 928eb50
+- [x] 1.2 Lint przechodzi po zmianach kontraktowych — 928eb50
 
 #### Manual
 
-- [ ] 1.3 Kontrakty są czytelne i jednoznacznie opisują neutralne/fallbackowe stany dla ITRA i pogody
+- [x] 1.3 Kontrakty są czytelne i jednoznacznie opisują neutralne/fallbackowe stany dla ITRA i pogody — 928eb50
 
 ### Phase 2: Orchestration, Engine, and Persistence Wiring
 
 #### Automated
 
-- [ ] 2.1 Recompute flow kompiluje się i działa z nowym payloadem sygnałów
-- [ ] 2.2 Lint przechodzi dla zmian orkiestracji/silnika/service
-- [ ] 2.3 Kontrakt RPC persist bundle pozostaje zgodny z service payloadem
+- [x] 2.1 Recompute flow kompiluje się i działa z nowym payloadem sygnałów
+- [x] 2.2 Lint przechodzi dla zmian orkiestracji/silnika/service
+- [x] 2.3 Kontrakt RPC persist bundle pozostaje zgodny z service payloadem
 
 #### Manual
 
-- [ ] 2.4 Scenariusz bez daty biegu nie uwzględnia pogody i nadal zwraca estymację
-- [ ] 2.5 Scenariusz braku ITRA zwraca estymację z neutralnym wpływem i warningiem informacyjnym
+- [x] 2.4 Scenariusz bez daty biegu nie uwzględnia pogody i nadal zwraca estymację
+- [x] 2.5 Scenariusz braku ITRA zwraca estymację z neutralnym wpływem i warningiem informacyjnym
 
 ### Phase 3: Regression Safety Net and Contract Validation
 

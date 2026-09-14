@@ -1,3 +1,9 @@
+import {
+  ITRA_GLOBAL_MULTIPLIER_MAX,
+  ITRA_GLOBAL_MULTIPLIER_MIN,
+  ITRA_GLOBAL_MULTIPLIER_NEUTRAL,
+  WEATHER_GLOBAL_MULTIPLIER_NEUTRAL,
+} from "@/lib/estimation/types";
 import type {
   DifficultyLabel,
   EstimationProfileInput,
@@ -117,6 +123,23 @@ function resolveDifficulty(effortScore: number): DifficultyLabel {
   return "hard";
 }
 
+function clampItraMultiplier(multiplier: number): number {
+  return Math.max(ITRA_GLOBAL_MULTIPLIER_MIN, Math.min(ITRA_GLOBAL_MULTIPLIER_MAX, multiplier));
+}
+
+function resolveItraMultiplier(input: RouteEstimationInput): number {
+  const value = input.externalSignals?.itra.globalTimeMultiplier ?? ITRA_GLOBAL_MULTIPLIER_NEUTRAL;
+  return clampItraMultiplier(value);
+}
+
+function resolveWeatherMultiplier(input: RouteEstimationInput): number {
+  if (input.externalSignals?.weather.status !== "available") {
+    return WEATHER_GLOBAL_MULTIPLIER_NEUTRAL;
+  }
+
+  return input.externalSignals.weather.globalTimeMultiplier;
+}
+
 export function computeRouteEstimation(input: RouteEstimationInput): RouteEstimationComputation {
   assertValidProfile(input.profile);
   assertValidRoute(input);
@@ -127,12 +150,22 @@ export function computeRouteEstimation(input: RouteEstimationInput): RouteEstima
   const averageSlopePercent = computeAverageSlopePercent(input.routeSnapshot.geometry);
   const basePaceMinutesPerKm = resolveExperiencePaceMinutesPerKm(input.profile.experienceLevel);
   const profileAdjustmentFactor = resolveProfileAdjustmentFactor(input.profile);
+  const itraMultiplier = resolveItraMultiplier(input);
+  const weatherMultiplier = resolveWeatherMultiplier(input);
+  const globalTimeMultiplierApplied = itraMultiplier * weatherMultiplier;
 
   const slopePenalty = averageSlopePercent !== null ? 1 + averageSlopePercent / 10 : 1;
   const elevationPenalty = 1 + elevationGainM / 3000;
   const estimatedTimeMinutes = Math.max(
     1,
-    Math.round(distanceKm * basePaceMinutesPerKm * profileAdjustmentFactor * slopePenalty * elevationPenalty),
+    Math.round(
+      distanceKm *
+        basePaceMinutesPerKm *
+        profileAdjustmentFactor *
+        slopePenalty *
+        elevationPenalty *
+        globalTimeMultiplierApplied,
+    ),
   );
 
   const effortScore = distanceKm * 5 + elevationGainM / 30 + (averageSlopePercent ?? 0) * 2;
@@ -145,6 +178,8 @@ export function computeRouteEstimation(input: RouteEstimationInput): RouteEstima
       elevationPerKmM,
       profileAdjustmentFactor,
       effortScore,
+      externalSignals: input.externalSignals,
+      globalTimeMultiplierApplied,
     },
     computedAt: new Date().toISOString(),
   };
