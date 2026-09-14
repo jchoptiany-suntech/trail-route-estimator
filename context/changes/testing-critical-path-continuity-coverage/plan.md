@@ -259,28 +259,28 @@ No schema or data migration is introduced in this phase. This plan only adds/mod
 
 #### Automated
 
-- [x] 2.1 Upload continuity integration scenarios pass: `node --test tests/critical-path-continuity.integration.test.js`
-- [x] 2.2 Explicit recompute continuity integration scenarios pass: `node --test tests/api-history-recompute-continuity.integration.test.js`
-- [x] 2.3 Dashboard history continuity contracts remain stable: `node --test tests/dashboard-history-view.test.js`
-- [x] 2.4 Build remains green after integration-test additions: `npm run build`
+- [x] 2.1 Upload continuity integration scenarios pass: `node --test tests/critical-path-continuity.integration.test.js` — b29a7a6
+- [x] 2.2 Explicit recompute continuity integration scenarios pass: `node --test tests/api-history-recompute-continuity.integration.test.js` — b29a7a6
+- [x] 2.3 Dashboard history continuity contracts remain stable: `node --test tests/dashboard-history-view.test.js` — b29a7a6
+- [x] 2.4 Build remains green after integration-test additions: `npm run build` — b29a7a6
 
 #### Manual
 
-- [ ] 2.5 Degraded history persistence is always surfaced distinctly from full continuity success
-- [ ] 2.6 Explicit recompute cannot run against mismatched current-route context
-- [ ] 2.7 Integration assertions remain behavioral (redirect/warning semantics), not implementation-mirror checks
+- [x] 2.5 Degraded history persistence is always surfaced distinctly from full continuity success — b29a7a6
+- [x] 2.6 Explicit recompute cannot run against mismatched current-route context — b29a7a6
+- [x] 2.7 Integration assertions remain behavioral (redirect/warning semantics), not implementation-mirror checks — b29a7a6
 
 ### Phase 3: Contract coverage for duplicate and mismatch semantics
 
 #### Automated
 
-- [ ] 3.1 Expanded history continuity contracts pass: `node --test tests/estimation-history-contracts.test.js`
-- [ ] 3.2 Combined continuity-focused integration suite passes: `node --test tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js`
-- [ ] 3.3 Full targeted continuity test pack passes together: `node --test tests/api-recompute-feedback.test.js tests/dashboard-history-view.test.js tests/estimation-history-contracts.test.js tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js`
-- [ ] 3.4 Lint remains clean for all touched tests: `npm run lint -- tests/api-recompute-feedback.test.js tests/dashboard-history-view.test.js tests/estimation-history-contracts.test.js tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js`
+- [x] 3.1 Expanded history continuity contracts pass: `node --test tests/estimation-history-contracts.test.js`
+- [x] 3.2 Combined continuity-focused integration suite passes: `node --test tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js`
+- [x] 3.3 Full targeted continuity test pack passes together: `node --test tests/api-recompute-feedback.test.js tests/dashboard-history-view.test.js tests/estimation-history-contracts.test.js tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js`
+- [x] 3.4 Lint remains clean for all touched tests: `npm run lint -- tests/api-recompute-feedback.test.js tests/dashboard-history-view.test.js tests/estimation-history-contracts.test.js tests/critical-path-continuity.integration.test.js tests/api-history-recompute-continuity.integration.test.js`
 
 #### Manual
 
-- [ ] 3.5 Repeated recompute semantics are understandable as continuity versions, not opaque duplicates
-- [ ] 3.6 Mismatch scenarios are explicit about which identity element changed (route hash, profile signature, or version context)
-- [ ] 3.7 The final scenario set is still limited to Phase 1 risk scope (#1, #2)
+- [x] 3.5 Repeated recompute semantics are understandable as continuity versions, not opaque duplicates
+- [x] 3.6 Mismatch scenarios are explicit about which identity element changed (route hash, profile signature, or version context)
+- [x] 3.7 The final scenario set is still limited to Phase 1 risk scope (#1, #2)

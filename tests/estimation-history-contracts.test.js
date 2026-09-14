@@ -11,6 +11,7 @@ function runHistoryContractsProbe() {
 import { buildRouteEstimationDeduplicationKey } from "./src/lib/estimation/history-signature.ts";
 import {
   getNextRouteEstimationHistoryVersion,
+  insertRouteEstimationHistoryVersionForUser,
   listRouteEstimationHistoryForUser,
   persistRouteEstimationBundle,
   upsertRouteEstimationHistoryEntryForUser,
@@ -85,6 +86,8 @@ let rpcDerivedMetrics = "";
 let rpcPlannedRunAt = "";
 let rpcPlannedRunOffset = "";
 let nextVersionData = "";
+const insertedVersions = [];
+const insertedRecomputeLinks = [];
 
 const listSupabase = {
   from() {
@@ -173,6 +176,57 @@ const upsertSupabase = {
                           asOf: null,
                         },
                       },
+                    },
+                    source_uploaded_at: "2026-09-13T22:00:00.000Z",
+                    profile_updated_at: "2026-09-13T22:00:00.000Z",
+                    computed_at: "2026-09-13T22:01:00.000Z",
+                    created_at: "2026-09-13T22:01:00.000Z",
+                    updated_at: "2026-09-13T22:01:00.000Z",
+                  },
+                  error: null,
+                });
+              },
+            };
+          },
+        };
+      },
+    };
+  },
+};
+
+const insertSupabase = {
+  from() {
+    return {
+      insert(payload) {
+        insertedVersions.push(payload.history_version);
+        insertedRecomputeLinks.push(payload.recomputed_from_history_id ?? null);
+        return {
+          select() {
+            return {
+              single() {
+                return Promise.resolve({
+                  data: {
+                    id: payload.history_version === 2 ? 31 : 32,
+                    user_id: "user-1",
+                    route_hash: keyA1.routeHash,
+                    profile_signature: keyA1.profileSignature,
+                    history_version: payload.history_version,
+                    recomputed_from_history_id: payload.recomputed_from_history_id ?? null,
+                    is_legacy: false,
+                    source_file_name: snapshot.sourceFileName,
+                    total_distance_m: snapshot.totalDistanceM,
+                    elevation_gain_m: snapshot.elevationGainM,
+                    planned_run_at: snapshot.plannedRunAt,
+                    planned_run_timezone_offset_minutes: snapshot.plannedRunTimezoneOffsetMinutes,
+                    estimated_time_minutes: 100,
+                    difficulty: "medium",
+                    average_slope_percent: 7.2,
+                    effort_score: 4.8,
+                    derived_metrics: {
+                      averageSlopePercent: 7.2,
+                      elevationPerKmM: 120,
+                      profileAdjustmentFactor: 1.1,
+                      effortScore: 4.8,
                     },
                     source_uploaded_at: "2026-09-13T22:00:00.000Z",
                     profile_updated_at: "2026-09-13T22:00:00.000Z",
@@ -327,6 +381,52 @@ await upsertSavedRouteHistoryForUser(
   snapshot,
   "2026-09-13T22:01:00.000Z",
 );
+await insertRouteEstimationHistoryVersionForUser(
+  insertSupabase as any,
+  "user-1",
+  keyA1,
+  {
+    estimatedTimeMinutes: 100,
+    difficulty: "medium",
+    derivedMetrics: {
+      averageSlopePercent: 7.2,
+      elevationPerKmM: 120,
+      profileAdjustmentFactor: 1.1,
+      effortScore: 4.8,
+    },
+    computedAt: "2026-09-13T22:01:00.000Z",
+  },
+  {
+    sourceUploadedAt: "2026-09-13T22:00:00.000Z",
+    profileUpdatedAt: "2026-09-13T22:00:00.000Z",
+  },
+  snapshot,
+  2,
+  1,
+);
+await insertRouteEstimationHistoryVersionForUser(
+  insertSupabase as any,
+  "user-1",
+  keyA1,
+  {
+    estimatedTimeMinutes: 101,
+    difficulty: "hard",
+    derivedMetrics: {
+      averageSlopePercent: 7.3,
+      elevationPerKmM: 121,
+      profileAdjustmentFactor: 1.11,
+      effortScore: 4.9,
+    },
+    computedAt: "2026-09-13T22:02:00.000Z",
+  },
+  {
+    sourceUploadedAt: "2026-09-13T22:00:00.000Z",
+    profileUpdatedAt: "2026-09-13T22:00:00.000Z",
+  },
+  snapshot,
+  3,
+  31,
+);
 await persistRouteEstimationBundle(
   rpcSupabase as any,
   "user-1",
@@ -384,6 +484,12 @@ console.log(\`bundleRpcCarriesSignals=\${rpcDerivedMetrics.includes("\\"external
 console.log(\`bundleRpcCarriesPlannedRunAt=\${rpcPlannedRunAt === "2026-09-20T05:30:00.000Z"}\`);
 console.log(\`bundleRpcCarriesPlannedRunOffset=\${rpcPlannedRunOffset === "-120"}\`);
 console.log(\`nextHistoryVersion=\${nextVersionData}\`);
+console.log(
+  \`recomputeThreadAppends=\${insertedVersions.join(",") === "2,3" && insertedRecomputeLinks.join(",") === "1,31"}\`,
+);
+console.log(
+  \`continuityBoundaryIncludesVersion=\${estimationConflict === "user_id,route_hash,profile_signature,history_version"}\`,
+);
 `;
 
   writeFileSync(scriptPath, script, "utf8");
@@ -448,4 +554,14 @@ void test("bundle persistence keeps external signal snapshot in derived metrics 
 void test("history version lookup increments from latest version", () => {
   const output = runHistoryContractsProbe();
   assert.match(output, /nextHistoryVersion=6/);
+});
+
+void test("explicit recompute continuity appends threaded versions", () => {
+  const output = runHistoryContractsProbe();
+  assert.match(output, /recomputeThreadAppends=true/);
+});
+
+void test("continuity boundary remains route+profile+version", () => {
+  const output = runHistoryContractsProbe();
+  assert.match(output, /continuityBoundaryIncludesVersion=true/);
 });

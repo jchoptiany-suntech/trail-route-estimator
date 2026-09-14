@@ -130,6 +130,7 @@ const routeHash = await buildRouteHash(snapshotBase);
 const mismatchRouteHash = await buildRouteHash({ ...snapshotBase, plannedRunAt: "2026-09-20T07:30:00.000Z" });
 const success = { ok: true, estimation: {}, warnings: [] } as const;
 const degraded = { ok: true, estimation: {}, warnings: [continuityWarning] } as const;
+const skipped = { ok: false, skipped: true, reason: "incomplete_profile" } as const;
 
 const invalidIdRedirect = await resolveHistoryRecomputeRedirect({
   historyEntryIdRaw: "abc",
@@ -154,6 +155,12 @@ const successRedirect = await resolveHistoryRecomputeRedirect({
   historyEntryRouteHash: routeHash,
   currentSnapshot: snapshotBase,
   recomputeResult: success,
+});
+const skippedRedirect = await resolveHistoryRecomputeRedirect({
+  historyEntryIdRaw: "7",
+  historyEntryRouteHash: routeHash,
+  currentSnapshot: snapshotBase,
+  recomputeResult: skipped,
 });
 
 let insertedHistoryVersion = -1;
@@ -274,6 +281,7 @@ console.log(\`routeHashMismatchDetected=\${routeHash !== mismatchRouteHash}\`);
 console.log(\`routeHashMismatchRedirect=\${mismatchRedirect}\`);
 console.log(\`degradedWriteRedirect=\${degradedRedirect}\`);
 console.log(\`successRedirect=\${successRedirect}\`);
+console.log(\`skippedRedirect=\${skippedRedirect}\`);
 console.log(\`explicitRecomputeAppendsVersion=\${insertedHistoryVersion === 5}\`);
 console.log(\`explicitRecomputeTracksSourceHistory=\${insertedRecomputedFromId === 12}\`);
 `;
@@ -313,6 +321,10 @@ void test("explicit recompute surfaces degraded history persistence warning", ()
 void test("explicit recompute keeps successful path warning-free", () => {
   const output = runHistoryRecomputeContinuityProbe();
   assert.match(output, /successRedirect=\/dashboard/);
+  assert.match(
+    output,
+    /skippedRedirect=\/dashboard\?warning=Recompute\+skipped\+because\+profile\+or\+route\+context\+is\+incomplete\./,
+  );
 });
 
 void test("explicit recompute persists as appended history version", () => {

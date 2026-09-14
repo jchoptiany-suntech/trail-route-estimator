@@ -69,6 +69,37 @@ const estimationHistory = [
     createdAt: "2026-09-12T22:01:00.000Z",
     updatedAt: "2026-09-12T22:01:00.000Z",
   },
+  {
+    id: 1,
+    userId: "u1",
+    deduplicationKey: { routeHash: "rh-1", profileSignature: "ps-1" },
+    historyVersion: 1,
+    recomputedFromHistoryId: null,
+    isLegacy: false,
+    sourceFileName: "Frozen-Tatra.gpx",
+    totalDistanceM: 14500,
+    elevationGainM: 980,
+    plannedRunAt: "2026-09-20T05:30:00.000Z",
+    plannedRunTimezoneOffsetMinutes: -120,
+    estimatedTimeMinutes: 149,
+    difficulty: "hard",
+    derivedMetrics: {
+      averageSlopePercent: 8.1,
+      elevationPerKmM: 119,
+      averagePaceMinPerKm: 10.2,
+      profileAdjustmentFactor: 1.09,
+      effortScore: 5.1,
+      externalSignals: {
+        itra: { status: "available" },
+        weather: { status: "available" },
+      },
+    },
+    sourceUploadedAt: "2026-09-12T21:00:00.000Z",
+    profileUpdatedAt: "2026-09-12T21:00:00.000Z",
+    computedAt: "2026-09-12T21:01:00.000Z",
+    createdAt: "2026-09-12T21:01:00.000Z",
+    updatedAt: "2026-09-12T21:01:00.000Z",
+  },
 ];
 
 const items = buildSavedEstimationHistoryItems(estimationHistory as any);
@@ -103,7 +134,7 @@ console.log(\`warningNone=\${resolveSavedHistoryWarning(null, null) === null}\`)
 
 void test("dashboard history view builds merged list entries", () => {
   const output = runDashboardHistoryProbe();
-  assert.match(output, /itemCount=2/);
+  assert.match(output, /itemCount=3/);
   assert.match(output, /firstHasRouteName=Frozen-Tatra.gpx/);
   assert.match(output, /secondHasRouteFallback=true/);
   assert.match(output, /firstHasAveragePace=true/);
