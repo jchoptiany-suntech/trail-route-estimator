@@ -4,7 +4,11 @@ import RouteMiniMap from "@/components/routes/RouteMiniMap";
 import RouteUploadForm from "@/components/routes/RouteUploadForm";
 import SavedEstimationHistory from "@/components/routes/SavedEstimationHistory.astro";
 import { buildRouteHash } from "@/lib/estimation/history-signature";
-import { buildSavedEstimationHistoryItems, resolveSavedHistoryWarning } from "@/lib/estimation/history-view";
+import {
+  buildSavedEstimationHistoryItems,
+  resolveProtectedHistoryEntryId,
+  resolveSavedHistoryWarning,
+} from "@/lib/estimation/history-view";
 import Layout from "@/layouts/Layout.astro";
 import { getRouteEstimationForUser, listRouteEstimationHistoryForUser } from "@/lib/estimation/service";
 import { getRouteSnapshotForUser } from "@/lib/route/service";
@@ -32,10 +36,8 @@ const estimationWarning = estimationResult.error
 const historyWarning = resolveSavedHistoryWarning(warning, estimationHistoryResult.error);
 const savedHistoryItems = buildSavedEstimationHistoryItems(estimationHistoryResult.data);
 const currentRouteHash = snapshot ? await buildRouteHash(snapshot) : null;
-const recomputeHistoryEntryId =
-  currentRouteHash !== null
-    ? (savedHistoryItems.find((item) => item.routeHash === currentRouteHash)?.id ?? null)
-    : null;
+const protectedHistoryEntryId = resolveProtectedHistoryEntryId(savedHistoryItems, currentRouteHash);
+const recomputeHistoryEntryId = protectedHistoryEntryId;
 ---
 
 <Layout title="Dashboard">
@@ -49,6 +51,20 @@ const recomputeHistoryEntryId =
       <p class="mb-6 text-blue-100/80">
         Welcome, <span class="font-semibold text-white">{user?.email}</span>
       </p>
+      {
+        success ? (
+          <p class="mb-4 rounded-lg border border-emerald-500/30 bg-emerald-900/30 px-3 py-2 text-sm text-emerald-300">
+            {success}
+          </p>
+        ) : null
+      }
+      {
+        error ? (
+          <p class="mb-4 rounded-lg border border-rose-500/30 bg-rose-900/30 px-3 py-2 text-sm text-rose-200">
+            {error}
+          </p>
+        ) : null
+      }
       {
         estimationWarning ? (
           <p class="mb-4 rounded-lg border border-amber-500/30 bg-amber-900/30 px-3 py-2 text-sm text-amber-200">
@@ -67,7 +83,7 @@ const recomputeHistoryEntryId =
       <div class="grid gap-6 md:grid-cols-2">
         <div class="space-y-4 rounded-xl border border-white/10 bg-white/5 p-4">
           <h2 class="text-lg font-semibold text-white">Upload GPX</h2>
-          <RouteUploadForm serverError={error} serverSuccess={success} hasSnapshot={Boolean(snapshot)} client:load />
+          <RouteUploadForm serverError={null} serverSuccess={null} hasSnapshot={Boolean(snapshot)} client:load />
           <a
             href="/profile"
             class="inline-block text-sm text-purple-300 transition-colors hover:text-purple-100 hover:underline"
@@ -126,7 +142,7 @@ const recomputeHistoryEntryId =
       </div>
 
       <div class="mt-6">
-        <SavedEstimationHistory items={savedHistoryItems} />
+        <SavedEstimationHistory items={savedHistoryItems} protectedHistoryEntryId={protectedHistoryEntryId} />
       </div>
     </div>
   </div>

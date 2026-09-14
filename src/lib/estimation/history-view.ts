@@ -50,3 +50,14 @@ export function resolveSavedHistoryWarning(
   }
   return null;
 }
+
+export function resolveProtectedHistoryEntryId(
+  items: SavedEstimationHistoryItem[],
+  currentRouteHash: string | null,
+): number | null {
+  if (currentRouteHash === null) {
+    return null;
+  }
+
+  return items.find((item) => item.routeHash === currentRouteHash)?.id ?? null;
+}

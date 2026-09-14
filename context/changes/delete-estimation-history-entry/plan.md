@@ -218,11 +218,11 @@ Additive RLS policy migration only; no data backfill required. Existing FK behav
 #### Automated
 
 - [ ] 1.1 Add route_estimation_history DELETE RLS policy migration
-- [x] 1.1 Add route_estimation_history DELETE RLS policy migration
-- [x] 1.2 Add history service delete helper scoped by user_id and id
-- [x] 1.3 Add POST /api/estimations/history/delete endpoint with current-route guard
-- [x] 1.4 Add endpoint contract test coverage for delete safety matrix
-- [x] 1.5 Pass build after backend deletion changes
+- [x] 1.1 Add route_estimation_history DELETE RLS policy migration — 6638299
+- [x] 1.2 Add history service delete helper scoped by user_id and id — 6638299
+- [x] 1.3 Add POST /api/estimations/history/delete endpoint with current-route guard — 6638299
+- [x] 1.4 Add endpoint contract test coverage for delete safety matrix — 6638299
+- [x] 1.5 Pass build after backend deletion changes — 6638299
 
 #### Manual
 
@@ -234,16 +234,16 @@ Additive RLS policy migration only; no data backfill required. Existing FK behav
 
 #### Automated
 
-- [ ] 2.1 Add per-card X delete form in SavedEstimationHistory.astro
-- [ ] 2.2 Pass protected current-route context from dashboard into history UI
-- [ ] 2.3 Render deterministic dashboard status banners for delete outcomes
-- [ ] 2.4 Pass lint/build for dashboard and history UI updates
+- [x] 2.1 Add per-card X delete form in SavedEstimationHistory.astro
+- [x] 2.2 Pass protected current-route context from dashboard into history UI
+- [x] 2.3 Render deterministic dashboard status banners for delete outcomes
+- [x] 2.4 Pass lint/build for dashboard and history UI updates
 
 #### Manual
 
-- [ ] 2.5 Confirm each deletable card shows top-right X with native confirm
-- [ ] 2.6 Confirm protected current-route card cannot be deleted
-- [ ] 2.7 Confirm success/error banners match delete outcomes
+- [x] 2.5 Confirm each deletable card shows top-right X with native confirm
+- [x] 2.6 Confirm protected current-route card cannot be deleted
+- [x] 2.7 Confirm success/error banners match delete outcomes
 
 ### Phase 3: Coverage and regression safety
 

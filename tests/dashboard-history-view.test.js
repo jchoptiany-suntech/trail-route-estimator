@@ -8,7 +8,11 @@ import test from "node:test";
 function runDashboardHistoryProbe() {
   const scriptPath = join(process.cwd(), ".tmp-dashboard-history-view-probe.ts");
   const script = `
-import { buildSavedEstimationHistoryItems, resolveSavedHistoryWarning } from "./src/lib/estimation/history-view.ts";
+import {
+  buildSavedEstimationHistoryItems,
+  resolveProtectedHistoryEntryId,
+  resolveSavedHistoryWarning,
+} from "./src/lib/estimation/history-view.ts";
 
 const estimationHistory = [
   {
@@ -108,6 +112,7 @@ const recomputeHistoryEntryId =
   currentRouteHash !== null
     ? (items.find((item) => item.routeHash === currentRouteHash)?.id ?? null)
     : null;
+const protectedHistoryEntryId = resolveProtectedHistoryEntryId(items, currentRouteHash);
 console.log(\`itemCount=\${items.length}\`);
 console.log(\`firstHasRouteName=\${items[0]?.sourceFileName}\`);
 console.log(\`secondHasRouteFallback=\${items[1]?.sourceFileName === null}\`);
@@ -117,6 +122,7 @@ console.log(\`firstWeatherStatus=\${items[0]?.weatherSignalStatus}\`);
 console.log(\`firstVersion=\${items[0]?.historyVersion}\`);
 console.log(\`secondLegacy=\${items[1]?.isLegacy}\`);
 console.log(\`recomputeHistoryEntryId=\${recomputeHistoryEntryId}\`);
+console.log(\`protectedHistoryEntryId=\${protectedHistoryEntryId}\`);
 console.log(\`warningPrefersQuery=\${resolveSavedHistoryWarning("from-query", new Error("x"))}\`);
 console.log(\`warningFromErrors=\${resolveSavedHistoryWarning(null, new Error("y"))}\`);
 console.log(\`warningNone=\${resolveSavedHistoryWarning(null, null) === null}\`);
@@ -143,6 +149,7 @@ void test("dashboard history view builds merged list entries", () => {
   assert.match(output, /firstVersion=2/);
   assert.match(output, /secondLegacy=true/);
   assert.match(output, /recomputeHistoryEntryId=3/);
+  assert.match(output, /protectedHistoryEntryId=3/);
 });
 
 void test("dashboard history warning resolution keeps deterministic precedence", () => {
