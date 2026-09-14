@@ -13,6 +13,8 @@ import test from "node:test";
  * @property {string} mappedInvalidRouteMessage
  * @property {string} mappedUnknownCode
  * @property {string} mappedUnknownMessage
+ * @property {string} itraClampApplied
+ * @property {string} weatherNotApplicableNeutral
  */
 
 function runEstimationProbe() {
@@ -50,6 +52,27 @@ const input = {
 
 const first = computeRouteEstimation(input);
 const second = computeRouteEstimation(input);
+const boundedSignalResult = computeRouteEstimation({
+  ...input,
+  externalSignals: {
+    itra: {
+      status: "available",
+      source: "itra",
+      rawScore: 720,
+      globalTimeMultiplier: 1.3,
+      message: null,
+      asOf: "2026-09-13T21:00:00.000Z",
+    },
+    weather: {
+      status: "not_applicable",
+      source: "open-meteo",
+      meanTemperatureC: null,
+      globalTimeMultiplier: 0.92,
+      message: "Weather skipped",
+      asOf: null,
+    },
+  },
+});
 const invalidProfileError = (() => {
   try {
     computeRouteEstimation({
@@ -78,6 +101,8 @@ console.log(\`mappedInvalidRouteCode=\${mappedInvalidRoute.code}\`);
 console.log(\`mappedInvalidRouteMessage=\${mappedInvalidRoute.message}\`);
 console.log(\`mappedUnknownCode=\${mappedUnknown.code}\`);
 console.log(\`mappedUnknownMessage=\${mappedUnknown.message}\`);
+console.log(\`itraClampApplied=\${boundedSignalResult.derivedMetrics.globalTimeMultiplierApplied === 1.05}\`);
+console.log(\`weatherNotApplicableNeutral=\${boundedSignalResult.estimatedTimeMinutes > first.estimatedTimeMinutes}\`);
 `;
   writeFileSync(scriptPath, script, "utf8");
   try {
@@ -92,6 +117,8 @@ console.log(\`mappedUnknownMessage=\${mappedUnknown.message}\`);
       mappedInvalidRouteMessage: "",
       mappedUnknownCode: "",
       mappedUnknownMessage: "",
+      itraClampApplied: "",
+      weatherNotApplicableNeutral: "",
     };
 
     for (const line of output.trim().split(/\r?\n/)) {
@@ -128,4 +155,10 @@ void test("estimation error mapping is stable", () => {
   assert.equal(probe.mappedInvalidRouteMessage, "Route data is not sufficient to compute an estimation.");
   assert.equal(probe.mappedUnknownCode, "unknown");
   assert.equal(probe.mappedUnknownMessage, "Something went wrong while calculating your personalized estimation.");
+});
+
+void test("estimation engine clamps ITRA and ignores weather when not applicable", () => {
+  const probe = runEstimationProbe();
+  assert.equal(probe.itraClampApplied, "true");
+  assert.equal(probe.weatherNotApplicableNeutral, "true");
 });

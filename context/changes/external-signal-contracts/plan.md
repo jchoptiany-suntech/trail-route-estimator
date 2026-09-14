@@ -254,24 +254,24 @@ Preferowany brak nowej migracji schematu: sygnały external pozostają w `derive
 
 #### Automated
 
-- [x] 2.1 Recompute flow kompiluje się i działa z nowym payloadem sygnałów
-- [x] 2.2 Lint przechodzi dla zmian orkiestracji/silnika/service
-- [x] 2.3 Kontrakt RPC persist bundle pozostaje zgodny z service payloadem
+- [x] 2.1 Recompute flow kompiluje się i działa z nowym payloadem sygnałów — a6641b9
+- [x] 2.2 Lint przechodzi dla zmian orkiestracji/silnika/service — a6641b9
+- [x] 2.3 Kontrakt RPC persist bundle pozostaje zgodny z service payloadem — a6641b9
 
 #### Manual
 
-- [x] 2.4 Scenariusz bez daty biegu nie uwzględnia pogody i nadal zwraca estymację
-- [x] 2.5 Scenariusz braku ITRA zwraca estymację z neutralnym wpływem i warningiem informacyjnym
+- [x] 2.4 Scenariusz bez daty biegu nie uwzględnia pogody i nadal zwraca estymację — a6641b9
+- [x] 2.5 Scenariusz braku ITRA zwraca estymację z neutralnym wpływem i warningiem informacyjnym — a6641b9
 
 ### Phase 3: Regression Safety Net and Contract Validation
 
 #### Automated
 
-- [ ] 3.1 Silnik estymacji przechodzi rozszerzone testy kontraktowe
-- [ ] 3.2 Warning flow przechodzi testy API feedback
-- [ ] 3.3 Persist/dedupe contracts przechodzą testy historii
-- [ ] 3.4 Build i lint całej zmiany przechodzą
+- [x] 3.1 Silnik estymacji przechodzi rozszerzone testy kontraktowe
+- [x] 3.2 Warning flow przechodzi testy API feedback
+- [x] 3.3 Persist/dedupe contracts przechodzą testy historii
+- [x] 3.4 Build i lint całej zmiany przechodzą
 
 #### Manual
 
-- [ ] 3.5 Review test coverage potwierdza, że każdy fallback path ma odpowiadający przypadek
+- [x] 3.5 Review test coverage potwierdza, że każdy fallback path ma odpowiadający przypadek

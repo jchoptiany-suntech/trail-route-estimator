@@ -66,6 +66,7 @@ const routeListOrder = [];
 let estimationConflict = "";
 let routeConflict = "";
 let rpcName = "";
+let rpcDerivedMetrics = "";
 
 const listSupabase = {
   from() {
@@ -135,6 +136,25 @@ const upsertSupabase = {
                       elevationPerKmM: 120,
                       profileAdjustmentFactor: 1.1,
                       effortScore: 4.8,
+                      globalTimeMultiplierApplied: 1,
+                      externalSignals: {
+                        itra: {
+                          status: "missing",
+                          source: "itra",
+                          rawScore: null,
+                          globalTimeMultiplier: 1,
+                          message: "ITRA index is unavailable, so a neutral runner factor was applied.",
+                          asOf: null,
+                        },
+                        weather: {
+                          status: "not_applicable",
+                          source: "open-meteo",
+                          meanTemperatureC: null,
+                          globalTimeMultiplier: 1,
+                          message: "Weather impact was skipped because no run datetime was provided.",
+                          asOf: null,
+                        },
+                      },
                     },
                     source_uploaded_at: "2026-09-13T22:00:00.000Z",
                     profile_updated_at: "2026-09-13T22:00:00.000Z",
@@ -197,8 +217,9 @@ const routeUpsertSupabase = {
 };
 
 const rpcSupabase = {
-  rpc(name) {
+  rpc(name, args) {
     rpcName = name;
+    rpcDerivedMetrics = JSON.stringify(args?.p_derived_metrics ?? {});
     return Promise.resolve({ error: null });
   },
 };
@@ -217,6 +238,25 @@ await upsertRouteEstimationHistoryEntryForUser(
       elevationPerKmM: 120,
       profileAdjustmentFactor: 1.1,
       effortScore: 4.8,
+      globalTimeMultiplierApplied: 1,
+      externalSignals: {
+        itra: {
+          status: "missing",
+          source: "itra",
+          rawScore: null,
+          globalTimeMultiplier: 1,
+          message: "ITRA index is unavailable, so a neutral runner factor was applied.",
+          asOf: null,
+        },
+        weather: {
+          status: "not_applicable",
+          source: "open-meteo",
+          meanTemperatureC: null,
+          globalTimeMultiplier: 1,
+          message: "Weather impact was skipped because no run datetime was provided.",
+          asOf: null,
+        },
+      },
     },
     computedAt: "2026-09-13T22:01:00.000Z",
   },
@@ -244,6 +284,25 @@ await persistRouteEstimationBundle(
       elevationPerKmM: 120,
       profileAdjustmentFactor: 1.1,
       effortScore: 4.8,
+      globalTimeMultiplierApplied: 1,
+      externalSignals: {
+        itra: {
+          status: "missing",
+          source: "itra",
+          rawScore: null,
+          globalTimeMultiplier: 1,
+          message: "ITRA index is unavailable, so a neutral runner factor was applied.",
+          asOf: null,
+        },
+        weather: {
+          status: "not_applicable",
+          source: "open-meteo",
+          meanTemperatureC: null,
+          globalTimeMultiplier: 1,
+          message: "Weather impact was skipped because no run datetime was provided.",
+          asOf: null,
+        },
+      },
     },
     computedAt: "2026-09-13T22:01:00.000Z",
   },
@@ -262,6 +321,7 @@ console.log(\`savedRouteListOrder=\${routeListOrder.join(",")}\`);
 console.log(\`estimationUpsertConflict=\${estimationConflict}\`);
 console.log(\`savedRouteUpsertConflict=\${routeConflict}\`);
 console.log(\`bundleRpcName=\${rpcName}\`);
+console.log(\`bundleRpcCarriesSignals=\${rpcDerivedMetrics.includes("\\"externalSignals\\"") && rpcDerivedMetrics.includes("\\"globalTimeMultiplierApplied\\"")}\`);
 `;
 
   writeFileSync(scriptPath, script, "utf8");
@@ -304,4 +364,9 @@ void test("history upserts keep explicit dedupe conflict keys", () => {
 void test("bundle persistence uses transactional rpc contract", () => {
   const output = runHistoryContractsProbe();
   assert.match(output, /bundleRpcName=persist_route_estimation_bundle/);
+});
+
+void test("bundle persistence keeps external signal snapshot in derived metrics payload", () => {
+  const output = runHistoryContractsProbe();
+  assert.match(output, /bundleRpcCarriesSignals=true/);
 });
