@@ -7,7 +7,7 @@ import { buildRouteHash } from "@/lib/estimation/history-signature";
 import { buildSavedEstimationHistoryItems, resolveSavedHistoryWarning } from "@/lib/estimation/history-view";
 import Layout from "@/layouts/Layout.astro";
 import { getRouteEstimationForUser, listRouteEstimationHistoryForUser } from "@/lib/estimation/service";
-import { getRouteSnapshotForUser, listSavedRouteHistoryForUser } from "@/lib/route/service";
+import { getRouteSnapshotForUser } from "@/lib/route/service";
 import { createClient } from "@/lib/supabase";
 
 const { user } = Astro.locals;
@@ -16,22 +16,21 @@ const success = Astro.url.searchParams.get("success");
 const warning = Astro.url.searchParams.get("warning");
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
-const [snapshotResult, estimationResult, estimationHistoryResult, routeHistoryResult] =
+const [snapshotResult, estimationResult, estimationHistoryResult] =
   user && supabase
     ? await Promise.all([
         getRouteSnapshotForUser(supabase, user.id),
         getRouteEstimationForUser(supabase, user.id),
         listRouteEstimationHistoryForUser(supabase, user.id),
-        listSavedRouteHistoryForUser(supabase, user.id),
       ])
-    : [{ data: null }, { data: null }, { data: [] }, { data: [] }];
+    : [{ data: null }, { data: null }, { data: [] }];
 const snapshot = snapshotResult.data;
 const estimation = estimationResult.data;
 const estimationWarning = estimationResult.error
   ? "We could not load your latest personalized estimation right now."
   : null;
-const historyWarning = resolveSavedHistoryWarning(warning, estimationHistoryResult.error, routeHistoryResult.error);
-const savedHistoryItems = buildSavedEstimationHistoryItems(estimationHistoryResult.data, routeHistoryResult.data);
+const historyWarning = resolveSavedHistoryWarning(warning, estimationHistoryResult.error);
+const savedHistoryItems = buildSavedEstimationHistoryItems(estimationHistoryResult.data);
 const currentRouteHash = snapshot ? await buildRouteHash(snapshot) : null;
 const recomputeHistoryEntryId =
   currentRouteHash !== null

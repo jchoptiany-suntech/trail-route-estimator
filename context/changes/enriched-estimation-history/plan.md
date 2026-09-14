@@ -249,23 +249,23 @@ This change is additive and backward-compatible for reads: legacy rows remain qu
 
 #### Automated
 
-- [x] 2.1 API recompute feedback tests pass for success/warning/failure paths: `node --test tests/api-recompute-feedback.test.js`.
-- [x] 2.2 History contract tests validate version creation for explicit recompute: `node --test tests/estimation-history-contracts.test.js`.
-- [x] 2.3 Build and lint pass after endpoint + orchestration updates: `npm run build && npm run lint`.
+- [x] 2.1 API recompute feedback tests pass for success/warning/failure paths: `node --test tests/api-recompute-feedback.test.js`. — 50f1706
+- [x] 2.2 History contract tests validate version creation for explicit recompute: `node --test tests/estimation-history-contracts.test.js`. — 50f1706
+- [x] 2.3 Build and lint pass after endpoint + orchestration updates: `npm run build && npm run lint`. — 50f1706
 
 #### Manual
 
-- [x] 2.4 User can trigger recompute from a specific history row.
-- [x] 2.5 Recompute creates a new history version and preserves prior entry unchanged.
-- [x] 2.6 Warning behavior stays consistent when optional signals are missing or provider fails.
+- [x] 2.4 User can trigger recompute from a specific history row. — 50f1706
+- [x] 2.5 Recompute creates a new history version and preserves prior entry unchanged. — 50f1706
+- [x] 2.6 Warning behavior stays consistent when optional signals are missing or provider fails. — 50f1706
 
 ### Phase 3: Dashboard continuity UX and regression coverage
 
 #### Automated
 
-- [ ] 3.1 Dashboard history view tests pass with legacy/versioned scenarios: `node --test tests/dashboard-history-view.test.js`.
-- [ ] 3.2 History contracts and recompute feedback tests pass end-to-end: `node --test tests/estimation-history-contracts.test.js tests/api-recompute-feedback.test.js`.
-- [ ] 3.3 Repository lint and build pass after UI/SSR changes: `npm run lint && npm run build`.
+- [x] 3.1 Dashboard history view tests pass with legacy/versioned scenarios: `node --test tests/dashboard-history-view.test.js`.
+- [x] 3.2 History contracts and recompute feedback tests pass end-to-end: `node --test tests/estimation-history-contracts.test.js tests/api-recompute-feedback.test.js`.
+- [x] 3.3 Repository lint and build pass after UI/SSR changes: `npm run lint && npm run build`.
 
 #### Manual
 

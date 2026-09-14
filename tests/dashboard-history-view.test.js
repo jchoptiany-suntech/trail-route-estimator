@@ -15,6 +15,14 @@ const estimationHistory = [
     id: 3,
     userId: "u1",
     deduplicationKey: { routeHash: "rh-1", profileSignature: "ps-1" },
+    historyVersion: 2,
+    recomputedFromHistoryId: 1,
+    isLegacy: false,
+    sourceFileName: "Frozen-Tatra.gpx",
+    totalDistanceM: 14500,
+    elevationGainM: 980,
+    plannedRunAt: "2026-09-20T05:30:00.000Z",
+    plannedRunTimezoneOffsetMinutes: -120,
     estimatedTimeMinutes: 145,
     difficulty: "hard",
     derivedMetrics: {
@@ -38,6 +46,14 @@ const estimationHistory = [
     id: 2,
     userId: "u1",
     deduplicationKey: { routeHash: "rh-missing", profileSignature: "ps-2" },
+    historyVersion: 1,
+    recomputedFromHistoryId: null,
+    isLegacy: true,
+    sourceFileName: null,
+    totalDistanceM: null,
+    elevationGainM: null,
+    plannedRunAt: null,
+    plannedRunTimezoneOffsetMinutes: null,
     estimatedTimeMinutes: 98,
     difficulty: "medium",
     derivedMetrics: {
@@ -55,41 +71,18 @@ const estimationHistory = [
   },
 ];
 
-const routeHistory = [
-  {
-    id: 7,
-    userId: "u1",
-    routeHash: "rh-1",
-    sourceFileName: "Tatra.gpx",
-    sourceFileSizeBytes: 10000,
-    pointCount: 30,
-    totalDistanceM: 14500,
-    elevationGainM: 980,
-    elevationLossM: 980,
-    minElevationM: 800,
-    maxElevationM: 1800,
-    startLat: 49.2,
-    startLng: 20.1,
-    endLat: 49.25,
-    endLng: 20.15,
-    bounds: { minLat: 49.2, minLng: 20.1, maxLat: 49.25, maxLng: 20.15 },
-    uploadedAt: "2026-09-13T22:00:00.000Z",
-    lastEstimatedAt: "2026-09-13T22:01:00.000Z",
-    createdAt: "2026-09-13T22:01:00.000Z",
-    updatedAt: "2026-09-13T22:01:00.000Z",
-  },
-];
-
-const items = buildSavedEstimationHistoryItems(estimationHistory as any, routeHistory as any);
+const items = buildSavedEstimationHistoryItems(estimationHistory as any);
 console.log(\`itemCount=\${items.length}\`);
 console.log(\`firstHasRouteName=\${items[0]?.sourceFileName}\`);
 console.log(\`secondHasRouteFallback=\${items[1]?.sourceFileName === null}\`);
 console.log(\`firstHasAveragePace=\${items[0]?.averagePaceMinPerKm === 10}\`);
 console.log(\`firstItraStatus=\${items[0]?.itraSignalStatus}\`);
 console.log(\`firstWeatherStatus=\${items[0]?.weatherSignalStatus}\`);
-console.log(\`warningPrefersQuery=\${resolveSavedHistoryWarning("from-query", new Error("x"), null)}\`);
-console.log(\`warningFromErrors=\${resolveSavedHistoryWarning(null, null, new Error("y"))}\`);
-console.log(\`warningNone=\${resolveSavedHistoryWarning(null, null, null) === null}\`);
+console.log(\`firstVersion=\${items[0]?.historyVersion}\`);
+console.log(\`secondLegacy=\${items[1]?.isLegacy}\`);
+console.log(\`warningPrefersQuery=\${resolveSavedHistoryWarning("from-query", new Error("x"))}\`);
+console.log(\`warningFromErrors=\${resolveSavedHistoryWarning(null, new Error("y"))}\`);
+console.log(\`warningNone=\${resolveSavedHistoryWarning(null, null) === null}\`);
 `;
 
   writeFileSync(scriptPath, script, "utf8");
@@ -105,11 +98,13 @@ console.log(\`warningNone=\${resolveSavedHistoryWarning(null, null, null) === nu
 void test("dashboard history view builds merged list entries", () => {
   const output = runDashboardHistoryProbe();
   assert.match(output, /itemCount=2/);
-  assert.match(output, /firstHasRouteName=Tatra.gpx/);
+  assert.match(output, /firstHasRouteName=Frozen-Tatra.gpx/);
   assert.match(output, /secondHasRouteFallback=true/);
   assert.match(output, /firstHasAveragePace=true/);
   assert.match(output, /firstItraStatus=available/);
   assert.match(output, /firstWeatherStatus=provider_error/);
+  assert.match(output, /firstVersion=2/);
+  assert.match(output, /secondLegacy=true/);
 });
 
 void test("dashboard history warning resolution keeps deterministic precedence", () => {
