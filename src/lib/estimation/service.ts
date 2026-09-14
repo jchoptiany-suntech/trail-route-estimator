@@ -155,6 +155,26 @@ export async function getRouteEstimationHistoryEntryForUser(
   return { data: mapRowToRouteEstimationHistory(data), error: null };
 }
 
+export async function deleteRouteEstimationHistoryEntryForUser(
+  supabase: SupabaseClient,
+  userId: string,
+  entryId: number,
+): Promise<{ deleted: boolean; error: Error | null }> {
+  const { data, error } = await supabase
+    .from("route_estimation_history")
+    .delete()
+    .eq("user_id", userId)
+    .eq("id", entryId)
+    .select("id")
+    .maybeSingle<{ id: number }>();
+
+  if (error) {
+    return { deleted: false, error };
+  }
+
+  return { deleted: data !== null, error: null };
+}
+
 export async function getNextRouteEstimationHistoryVersion(
   supabase: SupabaseClient,
   userId: string,
