@@ -44,6 +44,7 @@ export interface ExternalSignalResolution {
 export interface EstimationDerivedMetrics {
   averageSlopePercent: number | null;
   elevationPerKmM: number | null;
+  averagePaceMinPerKm?: number | null;
   profileAdjustmentFactor: number;
   effortScore: number;
   externalSignals?: ExternalSignalResolution;

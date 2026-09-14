@@ -20,8 +20,13 @@ const estimationHistory = [
     derivedMetrics: {
       averageSlopePercent: 8.2,
       elevationPerKmM: 120,
+      averagePaceMinPerKm: 10,
       profileAdjustmentFactor: 1.1,
       effortScore: 5.2,
+      externalSignals: {
+        itra: { status: "available" },
+        weather: { status: "provider_error" },
+      },
     },
     sourceUploadedAt: "2026-09-13T22:00:00.000Z",
     profileUpdatedAt: "2026-09-13T22:00:00.000Z",
@@ -38,6 +43,7 @@ const estimationHistory = [
     derivedMetrics: {
       averageSlopePercent: 5.2,
       elevationPerKmM: 90,
+      averagePaceMinPerKm: null,
       profileAdjustmentFactor: 1.0,
       effortScore: 3.8,
     },
@@ -78,6 +84,9 @@ const items = buildSavedEstimationHistoryItems(estimationHistory as any, routeHi
 console.log(\`itemCount=\${items.length}\`);
 console.log(\`firstHasRouteName=\${items[0]?.sourceFileName}\`);
 console.log(\`secondHasRouteFallback=\${items[1]?.sourceFileName === null}\`);
+console.log(\`firstHasAveragePace=\${items[0]?.averagePaceMinPerKm === 10}\`);
+console.log(\`firstItraStatus=\${items[0]?.itraSignalStatus}\`);
+console.log(\`firstWeatherStatus=\${items[0]?.weatherSignalStatus}\`);
 console.log(\`warningPrefersQuery=\${resolveSavedHistoryWarning("from-query", new Error("x"), null)}\`);
 console.log(\`warningFromErrors=\${resolveSavedHistoryWarning(null, null, new Error("y"))}\`);
 console.log(\`warningNone=\${resolveSavedHistoryWarning(null, null, null) === null}\`);
@@ -98,6 +107,9 @@ void test("dashboard history view builds merged list entries", () => {
   assert.match(output, /itemCount=2/);
   assert.match(output, /firstHasRouteName=Tatra.gpx/);
   assert.match(output, /secondHasRouteFallback=true/);
+  assert.match(output, /firstHasAveragePace=true/);
+  assert.match(output, /firstItraStatus=available/);
+  assert.match(output, /firstWeatherStatus=provider_error/);
 });
 
 void test("dashboard history warning resolution keeps deterministic precedence", () => {

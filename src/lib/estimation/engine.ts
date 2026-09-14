@@ -169,6 +169,7 @@ export function computeRouteEstimation(input: RouteEstimationInput): RouteEstima
   );
 
   const effortScore = distanceKm * 5 + elevationGainM / 30 + (averageSlopePercent ?? 0) * 2;
+  const averagePaceMinPerKm = distanceKm > 0 ? estimatedTimeMinutes / distanceKm : null;
 
   return {
     estimatedTimeMinutes,
@@ -176,6 +177,7 @@ export function computeRouteEstimation(input: RouteEstimationInput): RouteEstima
     derivedMetrics: {
       averageSlopePercent,
       elevationPerKmM,
+      averagePaceMinPerKm,
       profileAdjustmentFactor,
       effortScore,
       externalSignals: input.externalSignals,

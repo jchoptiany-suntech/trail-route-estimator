@@ -273,25 +273,25 @@ Wywołanie pogodowe musi mieć krótki timeout i nie może wydłużać ścieżki
 
 #### Automated
 
-- [x] 2.1 Build przechodzi dla flow profile/upload/recompute po dodaniu nowych pól
-- [x] 2.2 Lint przechodzi dla formularzy i API
-- [x] 2.3 Testy warning-flow pozostają zielone po rozszerzeniu ścieżek
-- [x] 2.4 Testy silnika przechodzą dla ITRA/weather z nowym input wiring
+- [x] 2.1 Build przechodzi dla flow profile/upload/recompute po dodaniu nowych pól — 2467ce0
+- [x] 2.2 Lint przechodzi dla formularzy i API — 2467ce0
+- [x] 2.3 Testy warning-flow pozostają zielone po rozszerzeniu ścieżek — 2467ce0
+- [x] 2.4 Testy silnika przechodzą dla ITRA/weather z nowym input wiring — 2467ce0
 
 #### Manual
 
-- [x] 2.5 Profil obsługuje zapis z ITRA i bez ITRA zgodnie z regułami draft/complete
-- [x] 2.6 Upload z datetime startu biegu wyzwala poprawną estymację
-- [x] 2.7 Brak danych pogodowych nie blokuje estymacji i pokazuje warning
+- [x] 2.5 Profil obsługuje zapis z ITRA i bez ITRA zgodnie z regułami draft/complete — 2467ce0
+- [x] 2.6 Upload z datetime startu biegu wyzwala poprawną estymację — 2467ce0
+- [x] 2.7 Brak danych pogodowych nie blokuje estymacji i pokazuje warning — 2467ce0
 
 ### Phase 3: Result Presentation and Regression Net
 
 #### Automated
 
-- [ ] 3.1 Testy widoku historii przechodzą po rozszerzeniu mapped fields
-- [ ] 3.2 Kontrakty historii i RPC payload przechodzą po zmianach enrichment
-- [ ] 3.3 Testy silnika przechodzą dla average pace i fallbacków
-- [ ] 3.4 Build i lint przechodzą dla całego zakresu
+- [x] 3.1 Testy widoku historii przechodzą po rozszerzeniu mapped fields
+- [x] 3.2 Kontrakty historii i RPC payload przechodzą po zmianach enrichment
+- [x] 3.3 Testy silnika przechodzą dla average pace i fallbacków
+- [x] 3.4 Build i lint przechodzą dla całego zakresu
 
 #### Manual
 

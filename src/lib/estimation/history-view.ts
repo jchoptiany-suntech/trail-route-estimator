@@ -9,6 +9,9 @@ export interface SavedEstimationHistoryItem {
   sourceFileName: string | null;
   totalDistanceM: number | null;
   elevationGainM: number | null;
+  averagePaceMinPerKm: number | null;
+  itraSignalStatus: string | null;
+  weatherSignalStatus: string | null;
 }
 
 export function buildSavedEstimationHistoryItems(
@@ -28,6 +31,9 @@ export function buildSavedEstimationHistoryItems(
       sourceFileName: route?.sourceFileName ?? null,
       totalDistanceM: route?.totalDistanceM ?? null,
       elevationGainM: route?.elevationGainM ?? null,
+      averagePaceMinPerKm: entry.derivedMetrics.averagePaceMinPerKm ?? null,
+      itraSignalStatus: entry.derivedMetrics.externalSignals?.itra.status ?? null,
+      weatherSignalStatus: entry.derivedMetrics.externalSignals?.weather.status ?? null,
     };
   });
 }

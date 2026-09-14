@@ -34,6 +34,24 @@ function formatEstimatedTime(minutes: number): string {
   return `${hours} h ${remainingMinutes} min`;
 }
 
+function formatPace(minutesPerKm: number | null | undefined): string {
+  if (minutesPerKm === null || minutesPerKm === undefined || !Number.isFinite(minutesPerKm) || minutesPerKm <= 0) {
+    return "n/a";
+  }
+
+  const totalSeconds = Math.round(minutesPerKm * 60);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")} min/km`;
+}
+
+function formatSignalStatus(status: string | undefined): string {
+  if (!status) {
+    return "n/a";
+  }
+  return status.replaceAll("_", " ");
+}
+
 export default function RouteEstimationCard({ estimation }: RouteEstimationCardProps) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4">
@@ -58,6 +76,10 @@ export default function RouteEstimationCard({ estimation }: RouteEstimationCardP
           <span className="text-blue-100/55">Effort score:</span> {estimation.derivedMetrics.effortScore.toFixed(1)}
         </p>
         <p>
+          <span className="text-blue-100/55">Avg pace:</span>{" "}
+          {formatPace(estimation.derivedMetrics.averagePaceMinPerKm)}
+        </p>
+        <p>
           <span className="text-blue-100/55">Avg slope:</span>{" "}
           {estimation.derivedMetrics.averageSlopePercent !== null
             ? `${estimation.derivedMetrics.averageSlopePercent.toFixed(2)}%`
@@ -68,6 +90,14 @@ export default function RouteEstimationCard({ estimation }: RouteEstimationCardP
           {estimation.derivedMetrics.elevationPerKmM !== null
             ? `${estimation.derivedMetrics.elevationPerKmM.toFixed(1)} m`
             : "n/a"}
+        </p>
+        <p>
+          <span className="text-blue-100/55">ITRA signal:</span>{" "}
+          {formatSignalStatus(estimation.derivedMetrics.externalSignals?.itra.status)}
+        </p>
+        <p>
+          <span className="text-blue-100/55">Weather signal:</span>{" "}
+          {formatSignalStatus(estimation.derivedMetrics.externalSignals?.weather.status)}
         </p>
       </div>
     </div>

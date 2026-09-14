@@ -36,6 +36,21 @@ function formatComputedAt(iso: string): string {
     minute: "2-digit",
   });
 }
+
+function formatPace(minutesPerKm: number | null): string {
+  if (minutesPerKm === null || !Number.isFinite(minutesPerKm) || minutesPerKm <= 0) {
+    return "n/a";
+  }
+
+  const totalSeconds = Math.round(minutesPerKm * 60);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")} min/km`;
+}
+
+function formatSignalStatus(status: string | null): string {
+  return status ? status.replaceAll("_", " ") : "n/a";
+}
 ---
 
 <div class="rounded-xl border border-white/10 bg-white/5 p-4">
@@ -63,6 +78,15 @@ function formatComputedAt(iso: string): string {
               <p>
                 <span class="text-blue-100/55">Elevation gain:</span>{" "}
                 {item.elevationGainM !== null ? `${item.elevationGainM.toFixed(0)} m` : "n/a"}
+              </p>
+              <p>
+                <span class="text-blue-100/55">Avg pace:</span> {formatPace(item.averagePaceMinPerKm)}
+              </p>
+              <p>
+                <span class="text-blue-100/55">ITRA signal:</span> {formatSignalStatus(item.itraSignalStatus)}
+              </p>
+              <p>
+                <span class="text-blue-100/55">Weather signal:</span> {formatSignalStatus(item.weatherSignalStatus)}
               </p>
             </div>
           </li>

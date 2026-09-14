@@ -15,6 +15,7 @@ import test from "node:test";
  * @property {string} mappedUnknownMessage
  * @property {string} itraClampApplied
  * @property {string} weatherNotApplicableNeutral
+ * @property {string} averagePacePresent
  */
 
 function runEstimationProbe() {
@@ -103,6 +104,7 @@ console.log(\`mappedUnknownCode=\${mappedUnknown.code}\`);
 console.log(\`mappedUnknownMessage=\${mappedUnknown.message}\`);
 console.log(\`itraClampApplied=\${boundedSignalResult.derivedMetrics.globalTimeMultiplierApplied === 1.05}\`);
 console.log(\`weatherNotApplicableNeutral=\${boundedSignalResult.estimatedTimeMinutes > first.estimatedTimeMinutes}\`);
+console.log(\`averagePacePresent=\${typeof first.derivedMetrics.averagePaceMinPerKm === "number" && first.derivedMetrics.averagePaceMinPerKm > 0}\`);
 `;
   writeFileSync(scriptPath, script, "utf8");
   try {
@@ -119,6 +121,7 @@ console.log(\`weatherNotApplicableNeutral=\${boundedSignalResult.estimatedTimeMi
       mappedUnknownMessage: "",
       itraClampApplied: "",
       weatherNotApplicableNeutral: "",
+      averagePacePresent: "",
     };
 
     for (const line of output.trim().split(/\r?\n/)) {
@@ -161,4 +164,5 @@ void test("estimation engine clamps ITRA and ignores weather when not applicable
   const probe = runEstimationProbe();
   assert.equal(probe.itraClampApplied, "true");
   assert.equal(probe.weatherNotApplicableNeutral, "true");
+  assert.equal(probe.averagePacePresent, "true");
 });
