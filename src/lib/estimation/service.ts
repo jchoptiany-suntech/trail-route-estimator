@@ -132,6 +132,51 @@ export async function listRouteEstimationHistoryForUser(
   };
 }
 
+export async function getRouteEstimationHistoryEntryForUser(
+  supabase: SupabaseClient,
+  userId: string,
+  entryId: number,
+): Promise<{ data: RouteEstimationHistoryEntry | null; error: Error | null }> {
+  const { data, error } = await supabase
+    .from("route_estimation_history")
+    .select(ROUTE_ESTIMATION_HISTORY_SELECT)
+    .eq("user_id", userId)
+    .eq("id", entryId)
+    .maybeSingle<RouteEstimationHistoryRow>();
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  if (!data) {
+    return { data: null, error: null };
+  }
+
+  return { data: mapRowToRouteEstimationHistory(data), error: null };
+}
+
+export async function getNextRouteEstimationHistoryVersion(
+  supabase: SupabaseClient,
+  userId: string,
+  deduplicationKey: RouteEstimationDeduplicationKey,
+): Promise<{ data: number | null; error: Error | null }> {
+  const { data, error } = await supabase
+    .from("route_estimation_history")
+    .select("history_version")
+    .eq("user_id", userId)
+    .eq("route_hash", deduplicationKey.routeHash)
+    .eq("profile_signature", deduplicationKey.profileSignature)
+    .order("history_version", { ascending: false })
+    .limit(1)
+    .maybeSingle<{ history_version: number }>();
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  return { data: (data?.history_version ?? 0) + 1, error: null };
+}
+
 export async function upsertRouteEstimationHistoryEntryForUser(
   supabase: SupabaseClient,
   userId: string,
@@ -174,6 +219,57 @@ export async function upsertRouteEstimationHistoryEntryForUser(
   return { data: mapRowToRouteEstimationHistory(data), error: null };
 }
 
+export async function insertRouteEstimationHistoryVersionForUser(
+  supabase: SupabaseClient,
+  userId: string,
+  deduplicationKey: RouteEstimationDeduplicationKey,
+  result: RouteEstimationComputation,
+  inputSnapshot: RouteEstimationInputSnapshot,
+  routeSnapshot: RouteSnapshot,
+  historyVersion: number,
+  recomputedFromHistoryId: number | null,
+): Promise<{ data: RouteEstimationHistoryEntry | null; error: Error | null }> {
+  const payload = {
+    user_id: userId,
+    route_hash: deduplicationKey.routeHash,
+    profile_signature: deduplicationKey.profileSignature,
+    history_version: historyVersion,
+    recomputed_from_history_id: recomputedFromHistoryId,
+    is_legacy: false,
+    source_file_name: routeSnapshot.sourceFileName,
+    total_distance_m: routeSnapshot.totalDistanceM,
+    elevation_gain_m: routeSnapshot.elevationGainM,
+    planned_run_at: routeSnapshot.plannedRunAt ?? null,
+    planned_run_timezone_offset_minutes: routeSnapshot.plannedRunTimezoneOffsetMinutes ?? null,
+    estimated_time_minutes: result.estimatedTimeMinutes,
+    difficulty: result.difficulty,
+    average_slope_percent: result.derivedMetrics.averageSlopePercent,
+    effort_score: result.derivedMetrics.effortScore,
+    derived_metrics: result.derivedMetrics,
+    source_uploaded_at: inputSnapshot.sourceUploadedAt,
+    profile_updated_at: inputSnapshot.profileUpdatedAt,
+    computed_at: result.computedAt,
+  };
+
+  const { data, error } = await supabase
+    .from("route_estimation_history")
+    .insert(payload)
+    .select(ROUTE_ESTIMATION_HISTORY_SELECT)
+    .single<RouteEstimationHistoryRow>();
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  return { data: mapRowToRouteEstimationHistory(data), error: null };
+}
+
+interface PersistBundleOptions {
+  historyVersion?: number;
+  recomputedFromHistoryId?: number | null;
+  historyLegacyFlag?: boolean;
+}
+
 export async function persistRouteEstimationBundle(
   supabase: SupabaseClient,
   userId: string,
@@ -181,11 +277,15 @@ export async function persistRouteEstimationBundle(
   result: RouteEstimationComputation,
   inputSnapshot: RouteEstimationInputSnapshot,
   routeSnapshot: RouteSnapshot,
+  options: PersistBundleOptions = {},
 ): Promise<{ error: Error | null }> {
   const { error } = await supabase.rpc("persist_route_estimation_bundle", {
     p_user_id: userId,
     p_route_hash: deduplicationKey.routeHash,
     p_profile_signature: deduplicationKey.profileSignature,
+    p_history_version: options.historyVersion ?? 1,
+    p_recomputed_from_history_id: options.recomputedFromHistoryId ?? null,
+    p_history_legacy_flag: options.historyLegacyFlag ?? false,
     p_estimated_time_minutes: result.estimatedTimeMinutes,
     p_difficulty: result.difficulty,
     p_average_slope_percent: result.derivedMetrics.averageSlopePercent,
@@ -208,6 +308,7 @@ export async function persistRouteEstimationBundle(
     p_end_lng: routeSnapshot.endLng,
     p_bounds: routeSnapshot.bounds,
     p_planned_run_at: routeSnapshot.plannedRunAt ?? null,
+    p_planned_run_timezone_offset_minutes: routeSnapshot.plannedRunTimezoneOffsetMinutes ?? null,
   });
 
   return { error };

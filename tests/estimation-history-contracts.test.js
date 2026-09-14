@@ -32,6 +32,7 @@ const snapshot = {
   endLng: 20.15,
   bounds: { minLat: 49.2, minLng: 20.1, maxLat: 49.25, maxLng: 20.15 },
   plannedRunAt: "2026-09-20T05:30:00.000Z",
+  plannedRunTimezoneOffsetMinutes: -120,
   geometry: [
     { lat: 49.2, lng: 20.1, eleM: 900 },
     { lat: 49.22, lng: 20.12, eleM: 1200 },
@@ -76,6 +77,7 @@ let routeConflict = "";
 let rpcName = "";
 let rpcDerivedMetrics = "";
 let rpcPlannedRunAt = "";
+let rpcPlannedRunOffset = "";
 
 const listSupabase = {
   from() {
@@ -231,6 +233,7 @@ const rpcSupabase = {
     rpcName = name;
     rpcDerivedMetrics = JSON.stringify(args?.p_derived_metrics ?? {});
     rpcPlannedRunAt = String(args?.p_planned_run_at ?? "");
+    rpcPlannedRunOffset = String(args?.p_planned_run_timezone_offset_minutes ?? "");
     return Promise.resolve({ error: null });
   },
 };
@@ -335,6 +338,7 @@ console.log(\`savedRouteUpsertConflict=\${routeConflict}\`);
 console.log(\`bundleRpcName=\${rpcName}\`);
 console.log(\`bundleRpcCarriesSignals=\${rpcDerivedMetrics.includes("\\"externalSignals\\"") && rpcDerivedMetrics.includes("\\"globalTimeMultiplierApplied\\"")}\`);
 console.log(\`bundleRpcCarriesPlannedRunAt=\${rpcPlannedRunAt === "2026-09-20T05:30:00.000Z"}\`);
+console.log(\`bundleRpcCarriesPlannedRunOffset=\${rpcPlannedRunOffset === "-120"}\`);
 `;
 
   writeFileSync(scriptPath, script, "utf8");
@@ -388,4 +392,5 @@ void test("bundle persistence keeps external signal snapshot in derived metrics 
   const output = runHistoryContractsProbe();
   assert.match(output, /bundleRpcCarriesSignals=true/);
   assert.match(output, /bundleRpcCarriesPlannedRunAt=true/);
+  assert.match(output, /bundleRpcCarriesPlannedRunOffset=true/);
 });

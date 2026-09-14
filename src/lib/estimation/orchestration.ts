@@ -6,7 +6,9 @@ import {
 } from "@/lib/estimation/error-mapping";
 import { buildRouteEstimationDeduplicationKey } from "@/lib/estimation/history-signature";
 import {
+  getNextRouteEstimationHistoryVersion,
   getRouteEstimationForUser,
+  insertRouteEstimationHistoryVersionForUser,
   persistRouteEstimationBundle,
   upsertRouteEstimationForUser,
 } from "@/lib/estimation/service";
@@ -19,6 +21,7 @@ import {
 } from "@/lib/estimation/types";
 import { resolveWeatherSignalFromProvider } from "@/lib/estimation/weather-provider";
 import { isProfileComplete, type SportProfile } from "@/lib/profile/service";
+import { upsertSavedRouteHistoryForUser } from "@/lib/route/service";
 import type { RouteSnapshot } from "@/lib/route/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -28,6 +31,8 @@ interface RecomputeInput {
   snapshot: RouteSnapshot | null;
   profile: SportProfile | null;
   weatherProviderError?: Error | null;
+  recomputedFromHistoryId?: number | null;
+  forceNewHistoryVersion?: boolean;
 }
 
 export interface RecomputeSuccess {
@@ -58,6 +63,14 @@ interface ExternalSignalResolutionResult {
 function isHistoryOnlyBundleFailure(error: Error): boolean {
   const haystack = `${error.name} ${error.message}`.toLowerCase();
   return haystack.includes("route_estimation_history") || haystack.includes("saved_route_history");
+}
+
+function isHistoryVersionConflict(error: Error): boolean {
+  const haystack = `${error.name} ${error.message}`.toLowerCase();
+  return (
+    haystack.includes("duplicate key value") &&
+    haystack.includes("route_estimation_history_user_route_profile_version_key")
+  );
 }
 
 function resolveItraSignal(itraIndex: number | null): ExternalSignalResolutionResult["externalSignals"]["itra"] {
@@ -154,6 +167,106 @@ export async function recomputeLatestEstimation(input: RecomputeInput): Promise<
       updatedAt: input.profile.updatedAt,
     });
 
+    let historyVersion = 1;
+    if (input.forceNewHistoryVersion) {
+      const nextVersion = await getNextRouteEstimationHistoryVersion(input.supabase, input.userId, deduplicationKey);
+      if (nextVersion.error || nextVersion.data === null) {
+        return {
+          ok: false,
+          error: {
+            code: "storage_failure",
+            message: "Unable to prepare history recompute right now. Please try again.",
+          },
+        };
+      }
+      historyVersion = nextVersion.data;
+    }
+
+    if (input.forceNewHistoryVersion) {
+      const latestWrite = await upsertRouteEstimationForUser(input.supabase, input.userId, computed, {
+        sourceUploadedAt: input.snapshot.uploadedAt,
+        profileUpdatedAt: input.profile.updatedAt,
+      });
+      if (latestWrite.error || !latestWrite.data) {
+        return {
+          ok: false,
+          error: {
+            code: "storage_failure",
+            message: "Unable to save estimation right now. Please try again.",
+          },
+        };
+      }
+
+      let historyWrite = await insertRouteEstimationHistoryVersionForUser(
+        input.supabase,
+        input.userId,
+        deduplicationKey,
+        computed,
+        {
+          sourceUploadedAt: input.snapshot.uploadedAt,
+          profileUpdatedAt: input.profile.updatedAt,
+        },
+        input.snapshot,
+        historyVersion,
+        input.recomputedFromHistoryId ?? null,
+      );
+
+      if (historyWrite.error && isHistoryVersionConflict(historyWrite.error)) {
+        const retryVersion = await getNextRouteEstimationHistoryVersion(input.supabase, input.userId, deduplicationKey);
+        if (!retryVersion.error && retryVersion.data !== null) {
+          historyWrite = await insertRouteEstimationHistoryVersionForUser(
+            input.supabase,
+            input.userId,
+            deduplicationKey,
+            computed,
+            {
+              sourceUploadedAt: input.snapshot.uploadedAt,
+              profileUpdatedAt: input.profile.updatedAt,
+            },
+            input.snapshot,
+            retryVersion.data,
+            input.recomputedFromHistoryId ?? null,
+          );
+        }
+      }
+
+      if (historyWrite.error || !historyWrite.data) {
+        return {
+          ok: true,
+          estimation: latestWrite.data,
+          warnings: [
+            ...externalSignalResolution.warnings,
+            createRouteEstimationError("history_storage_failure").message,
+          ],
+        };
+      }
+
+      const routeHistoryWrite = await upsertSavedRouteHistoryForUser(
+        input.supabase,
+        input.userId,
+        deduplicationKey.routeHash,
+        input.snapshot,
+        computed.computedAt,
+      );
+
+      if (routeHistoryWrite.error || !routeHistoryWrite.data) {
+        return {
+          ok: true,
+          estimation: latestWrite.data,
+          warnings: [
+            ...externalSignalResolution.warnings,
+            createRouteEstimationError("history_storage_failure").message,
+          ],
+        };
+      }
+
+      return {
+        ok: true,
+        estimation: latestWrite.data,
+        warnings: externalSignalResolution.warnings,
+      };
+    }
+
     const persistedBundle = await persistRouteEstimationBundle(
       input.supabase,
       input.userId,
@@ -164,6 +277,11 @@ export async function recomputeLatestEstimation(input: RecomputeInput): Promise<
         profileUpdatedAt: input.profile.updatedAt,
       },
       input.snapshot,
+      {
+        historyVersion,
+        recomputedFromHistoryId: input.recomputedFromHistoryId ?? null,
+        historyLegacyFlag: false,
+      },
     );
 
     if (persistedBundle.error && isHistoryOnlyBundleFailure(persistedBundle.error)) {

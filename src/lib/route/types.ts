@@ -55,6 +55,7 @@ export interface RouteSnapshotInput {
   geometry: GpxPoint[];
   metrics: RouteSnapshotMetrics;
   plannedRunAt?: string | null;
+  plannedRunTimezoneOffsetMinutes?: number | null;
 }
 
 export interface RouteSnapshotRow {
@@ -74,6 +75,7 @@ export interface RouteSnapshotRow {
   bounds: RouteBounds;
   geometry: GpxPoint[];
   planned_run_at: string | null;
+  planned_run_timezone_offset_minutes: number | null;
   uploaded_at: string;
   created_at: string;
   updated_at: string;
@@ -96,6 +98,7 @@ export interface RouteSnapshot {
   bounds: RouteBounds;
   geometry: GpxPoint[];
   plannedRunAt?: string | null;
+  plannedRunTimezoneOffsetMinutes?: number | null;
   uploadedAt: string;
   createdAt: string;
   updatedAt: string;

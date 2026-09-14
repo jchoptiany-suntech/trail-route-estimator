@@ -234,30 +234,30 @@ This change is additive and backward-compatible for reads: legacy rows remain qu
 
 #### Automated
 
-- [x] 1.1 New migrations apply cleanly in local Supabase workflow: `npx supabase migration up`.
-- [x] 1.2 Type contracts compile after schema expansion: `npm run build`.
-- [x] 1.3 Lint remains clean after contract updates: `npm run lint`.
-- [x] 1.4 History contract tests pass with new continuity fields: `node --test tests/estimation-history-contracts.test.js`.
+- [x] 1.1 New migrations apply cleanly in local Supabase workflow: `npx supabase migration up`. — 439e2e8
+- [x] 1.2 Type contracts compile after schema expansion: `npm run build`. — 439e2e8
+- [x] 1.3 Lint remains clean after contract updates: `npm run lint`. — 439e2e8
+- [x] 1.4 History contract tests pass with new continuity fields: `node --test tests/estimation-history-contracts.test.js`. — 439e2e8
 
 #### Manual
 
-- [x] 1.5 Existing historical records remain queryable and visibly marked as legacy.
-- [x] 1.6 New continuity fields are nullable/compatible for legacy rows and populated for new rows.
-- [x] 1.7 Schema supports multiple versions for same conceptual route/profile history thread.
+- [x] 1.5 Existing historical records remain queryable and visibly marked as legacy. — 439e2e8
+- [x] 1.6 New continuity fields are nullable/compatible for legacy rows and populated for new rows. — 439e2e8
+- [x] 1.7 Schema supports multiple versions for same conceptual route/profile history thread. — 439e2e8
 
 ### Phase 2: Explicit per-entry recompute workflow
 
 #### Automated
 
-- [ ] 2.1 API recompute feedback tests pass for success/warning/failure paths: `node --test tests/api-recompute-feedback.test.js`.
-- [ ] 2.2 History contract tests validate version creation for explicit recompute: `node --test tests/estimation-history-contracts.test.js`.
-- [ ] 2.3 Build and lint pass after endpoint + orchestration updates: `npm run build && npm run lint`.
+- [x] 2.1 API recompute feedback tests pass for success/warning/failure paths: `node --test tests/api-recompute-feedback.test.js`.
+- [x] 2.2 History contract tests validate version creation for explicit recompute: `node --test tests/estimation-history-contracts.test.js`.
+- [x] 2.3 Build and lint pass after endpoint + orchestration updates: `npm run build && npm run lint`.
 
 #### Manual
 
-- [ ] 2.4 User can trigger recompute from a specific history row.
-- [ ] 2.5 Recompute creates a new history version and preserves prior entry unchanged.
-- [ ] 2.6 Warning behavior stays consistent when optional signals are missing or provider fails.
+- [x] 2.4 User can trigger recompute from a specific history row.
+- [x] 2.5 Recompute creates a new history version and preserves prior entry unchanged.
+- [x] 2.6 Warning behavior stays consistent when optional signals are missing or provider fails.
 
 ### Phase 3: Dashboard continuity UX and regression coverage
 

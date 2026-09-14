@@ -40,14 +40,19 @@ async function sha256Hex(value: string): Promise<string> {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+export async function buildRouteHash(snapshot: RouteSnapshot): Promise<string> {
+  return sha256Hex(toRouteCanonicalSnapshot(snapshot));
+}
+
+export async function buildProfileSignature(profile: EstimationProfileInput): Promise<string> {
+  return sha256Hex(toProfileCanonicalSignature(profile));
+}
+
 export async function buildRouteEstimationDeduplicationKey(
   snapshot: RouteSnapshot,
   profile: EstimationProfileInput,
 ): Promise<RouteEstimationDeduplicationKey> {
-  const [routeHash, profileSignature] = await Promise.all([
-    sha256Hex(toRouteCanonicalSnapshot(snapshot)),
-    sha256Hex(toProfileCanonicalSignature(profile)),
-  ]);
+  const [routeHash, profileSignature] = await Promise.all([buildRouteHash(snapshot), buildProfileSignature(profile)]);
 
   return { routeHash, profileSignature };
 }

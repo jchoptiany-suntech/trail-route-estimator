@@ -3,6 +3,7 @@ import RouteEstimationCard from "@/components/routes/RouteEstimationCard";
 import RouteMiniMap from "@/components/routes/RouteMiniMap";
 import RouteUploadForm from "@/components/routes/RouteUploadForm";
 import SavedEstimationHistory from "@/components/routes/SavedEstimationHistory.astro";
+import { buildRouteHash } from "@/lib/estimation/history-signature";
 import { buildSavedEstimationHistoryItems, resolveSavedHistoryWarning } from "@/lib/estimation/history-view";
 import Layout from "@/layouts/Layout.astro";
 import { getRouteEstimationForUser, listRouteEstimationHistoryForUser } from "@/lib/estimation/service";
@@ -31,6 +32,11 @@ const estimationWarning = estimationResult.error
   : null;
 const historyWarning = resolveSavedHistoryWarning(warning, estimationHistoryResult.error, routeHistoryResult.error);
 const savedHistoryItems = buildSavedEstimationHistoryItems(estimationHistoryResult.data, routeHistoryResult.data);
+const currentRouteHash = snapshot ? await buildRouteHash(snapshot) : null;
+const recomputeHistoryEntryId =
+  currentRouteHash !== null
+    ? (savedHistoryItems.find((item) => item.routeHash === currentRouteHash)?.id ?? null)
+    : null;
 ---
 
 <Layout title="Dashboard">
@@ -106,7 +112,11 @@ const savedHistoryItems = buildSavedEstimationHistoryItems(estimationHistoryResu
       <div class="mt-6">
         {
           estimation ? (
-            <RouteEstimationCard estimation={estimation} client:load />
+            <RouteEstimationCard
+              estimation={estimation}
+              recomputeHistoryEntryId={recomputeHistoryEntryId}
+              client:load
+            />
           ) : (
             <p class="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-blue-100/70">
               Personalized estimation is not available yet. Upload a route and keep your profile completed to generate
