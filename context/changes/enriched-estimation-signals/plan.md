@@ -288,13 +288,13 @@ Wywołanie pogodowe musi mieć krótki timeout i nie może wydłużać ścieżki
 
 #### Automated
 
-- [x] 3.1 Testy widoku historii przechodzą po rozszerzeniu mapped fields
-- [x] 3.2 Kontrakty historii i RPC payload przechodzą po zmianach enrichment
-- [x] 3.3 Testy silnika przechodzą dla average pace i fallbacków
-- [x] 3.4 Build i lint przechodzą dla całego zakresu
+- [x] 3.1 Testy widoku historii przechodzą po rozszerzeniu mapped fields — 0371aed
+- [x] 3.2 Kontrakty historii i RPC payload przechodzą po zmianach enrichment — 0371aed
+- [x] 3.3 Testy silnika przechodzą dla average pace i fallbacków — 0371aed
+- [x] 3.4 Build i lint przechodzą dla całego zakresu — 0371aed
 
 #### Manual
 
-- [ ] 3.5 Latest wynik pokazuje time + average pace + kontekst sygnałów
-- [ ] 3.6 Historia pokazuje wzbogacone rekordy po nowych estymacjach
-- [ ] 3.7 Komunikaty ostrzegawcze są spójne między upload i profile flow
+- [x] 3.5 Latest wynik pokazuje time + average pace + kontekst sygnałów — 0371aed
+- [x] 3.6 Historia pokazuje wzbogacone rekordy po nowych estymacjach — 0371aed
+- [x] 3.7 Komunikaty ostrzegawcze są spójne między upload i profile flow — 0371aed
